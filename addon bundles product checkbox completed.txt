@@ -1,0 +1,538 @@
+    {% assign bundleProducts = product.metafields.custom.testaddon.value %}
+          
+     <div class="bundle-parent">
+      {% if bundleProducts != blank %}        
+        <h2>Add on product</h2>
+         <div class="bundle-inner">
+        {% for bundleProduct in bundleProducts %}
+        <div class="custom-bundle-middle">
+          <form method="post" action="/cart/add" id="bundle-form" enctype="multipart/form-data">
+            {% if bundleProduct.available %}
+              <div class="media_of_bundle">
+                <img src="{{bundleProduct.featured_image.src | img_url :"100x" }}">
+              </div>
+               <input type="checkbox" class="bundle_product_select" name="addon_productselect" data_bundle_product = "{{ bundleProduct.selected_or_first_available_variant.id   }}">
+              <div class="extra-product-price">
+                <p>{{ bundleProduct.title }}</p>
+                <span>{{ bundleProduct.selected_or_first_available_variant.price | money }}</span>
+                
+              </div>
+            {% else %}
+              <div class="{% unless bundleProduct.available %} hidden {% endunless %} ">
+                {{ bundleProduct.title }} sold out
+              </div>
+            {% endif %}
+          </form>
+        </div>
+       
+          
+      {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+	
+	// cart-Drawer changes
+	
+	<style>
+  .drawer {
+    visibility: hidden;
+  }
+</style>
+
+ 
+
+// for grouping but jaruri nhi h addon k liye 
+
+{%- assign bundle_ID = '' -%}
+{%- assign bundle_main = '' -%}
+{%- for item in cart.items -%}
+  {% assign loopIndex = 'no_relation' | append: forloop.index %}
+  {%- assign relationId = item.properties.bundle_ID | default: forloop.index -%}
+
+  {%- unless bundle_ID contains relationId -%}
+    {%- assign bundle_ID = bundle_ID | append: relationId | append: ',' -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign bundle_ID = bundle_ID | remove_last: ',' -%}
+{%- assign bundle_main = bundle_main | remove_last: ',' -%}
+
+<cart-drawer class="drawer{% if cart == empty %} is-empty{% endif %}">
+  <div id="CartDrawer" class="cart-drawer">
+    <div id="CartDrawer-Overlay" class="cart-drawer__overlay"></div>
+
+
+// end	
+	
+	or 
+	
+	           </thead>
+
+                  <tbody role="rowgroup">
+                     {%- assign item_relationId = ""   -%}
+                    {%- for item in cart.items -%}
+                    {%- assign item_relationId = item.properties.bundle_ID | default: forloop.index  -%}
+                      {%- assign bundle_main = item.properties['main-product'] | default: forloop.index -%}
+                              {%- if bundle_main contains bundle_main -%}
+                                {%- assign bundle_main = bundle_main -%}
+                              {% endif %}  
+                      <tr id="CartDrawer-Item-{{ item.index | plus: 1 }}" class="cart-item" role="row"
+                        data-item-key="{{ item.key }}"
+                        data-relation-id="{{ item_relationId }}"
+                        data-bundle_id="{{ item.json }}"
+                        >
+						
+						
+						
+
+    or remvove btn
+	
+	                </quantity-input>
+                              </div>
+
+                              {% assign myLoopIndex = 'no_relation' | append: forloop.index %}
+                              {%- assign myRelationId = item.properties.bundle_ID | default: forloop.index -%}
+
+                              {%- assign bundle_main = item.properties['main-product'] | default: forloop.index -%}
+                              {%- if bundle_main contains bundle_main -%}
+                                {%- assign bundle_main = bundle_main -%}
+                                <cart-remove-button
+                                  id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
+                                  data-index="{{ item.index | plus: 1 }}"
+                                  data-key="{{ item.key }}"
+                                  data-relation-id="{{ myRelationId }}"
+                                  data-quantity-variant-id="{{ item.variant.id }}"
+                                  data-main-product="{{ bundle_main}}"
+                                >
+                                  <button
+                                    type="button"
+                                    class="button button--tertiary cart-remove-button"
+                                    aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
+                                    data-variant-id="{{ item.variant.id }}"
+                                  >
+                                    <span class="svg-wrapper">
+                                      {{- 'icon-remove.svg' | inline_asset_content -}}
+                                    </span>
+                                  </button>
+                                </cart-remove-button>
+                              {%- else -%}
+                                <cart-remove-button
+                                  id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
+                                  data-index="{{ item.index | plus: 1 }}"
+                                  data-key="{{ item.key }}"
+                                  data-relation-id="{{  forloop.index }}"
+                                  data-quantity-variant-id="{{ item.variant.id }}"
+                                >
+                                  <button
+                                    type="button"
+                                    class="button button--tertiary cart-remove-button"
+                                    aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
+                                    data-variant-id="{{ item.variant.id }}"
+                                  >
+                                    <span class="svg-wrapper">
+                                      {{- 'icon-remove.svg' | inline_asset_content -}}
+                                    </span>
+                                  </button>
+                                </cart-remove-button>
+                              {% endif %}
+							  
+							 
+							 
+							 
+	or quantity same as bundle main k liye  js niche hai
+	
+	        <input
+                                    class="quantity__input"
+                                    type="number"
+                                    mainProduct="{{ bundle_main }}"
+                                    data-quantity-relation-id="{{ item_relationId }}"
+                                    data-quantity-variant-id="{{ item.variant.id }}"
+                                    name="updates[]"
+                                    value="{{ item.quantity }}"
+                                    {% # theme-check-disable %}
+                                    data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                                    min="0"
+                                    data-min="{{ item.variant.quantity_rule.min }}"
+                                    {% if item.variant.quantity_rule.max != null %}
+                                      max="{{ item.variant.quantity_rule.max }}"
+                                    {% endif %}
+                                    step="{{ item.variant.quantity_rule.increment }}"
+                                    {% # theme-check-enable %}
+                                    aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
+                                    id="Drawer-quantity-{{ item.index | plus: 1 }}"
+                                    data-index="{{ item.index | plus: 1 }}"
+                                  >
+                                  <button class="quantity__button" name="plus" type="button">
+                                    <span class="visually-hidden">
+                                      {{-
+                                        'products.product.quantity.increase'
+                                        | t: product: item.product.title
+                                        | escape
+                                      -}}
+                                    </span>
+                                    <span class="svg-wrapper">
+                                      {{- 'icon-plus.svg' | inline_asset_content -}}
+                                    </span>
+                                  </button>
+                                </quantity-input>
+								
+								
+								
+								
+	same ese drawer ki tarh hi main-cart-items.liquid me changes h 
+	
+	<script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+
+{%- assign bundle_ID = '' -%}
+{%- assign bundle_main = '' -%}
+{%- for item in cart.items -%}
+  {% assign loopIndex = 'no_relation' | append: forloop.index %}
+  {%- assign relationId = item.properties.bundle_ID | default: forloop.index -%}
+
+  {%- unless bundle_ID contains relationId -%}
+    {%- assign bundle_ID = bundle_ID | append: relationId | append: ',' -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign bundle_ID = bundle_ID | remove_last: ',' -%}
+{%- assign bundle_main = bundle_main | remove_last: ',' -%}
+
+<cart-items class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
+  <div class="page-width">
+  
+  
+  or    <tbody>
+                {%- for item in cart.items -%}
+                     {%- assign item_relationId = ""   -%}
+                   {%- assign item_relationId = item.properties.bundle_ID | default: forloop.index  -%}
+                  <tr class="cart-item" id="CartItem-{{ item.index | plus: 1 }}"
+                    data-item-key="{{ item.key }}"
+                        data-relation-id="{{ item_relationId }}"
+                        data-bundle_id="{{ item.json }}"
+                    >
+                    <td class="cart-item__media">
+					
+					
+					
+	or
+	
+	     <quantity-input class="quantity cart-quantity">
+                              <button class="quantity__button" name="minus" type="button">
+                                <span class="visually-hidden">
+                                  {{- 'products.product.quantity.decrease' | t: product: item.product.title | escape -}}
+                                </span>
+                                <span class="svg-wrapper">
+                                  {{- 'icon-minus.svg' | inline_asset_content -}}
+                                </span>
+                              </button>
+                              <input
+                                class="quantity__input"
+                                  mainProduct="{{ bundle_main }}"
+                                 data-quantity-relation-id="{{ item_relationId }}"
+                                data-quantity-variant-id="{{ item.variant.id }}"
+                                type="number"
+                                name="updates[]"
+                                value="{{ item.quantity }}"
+                                {% # theme-check-disable %}
+                                data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
+                                min="0"
+                                data-min="{{ item.variant.quantity_rule.min }}"
+                                {% if item.variant.quantity_rule.max != null %}
+                                  max="{{ item.variant.quantity_rule.max }}"
+                                {% endif %}
+                                step="{{ item.variant.quantity_rule.increment }}"
+                                {% # theme-check-enable %}
+                                aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
+                                id="Quantity-{{ item.index | plus: 1 }}"
+                                data-index="{{ item.index | plus: 1 }}"
+                              >
+                              <button class="quantity__button" name="plus" type="button">
+                                <span class="visually-hidden">
+                                  {{- 'products.product.quantity.increase' | t: product: item.product.title | escape -}}
+                                </span>
+                                <span class="svg-wrapper">
+                                  {{- 'icon-plus.svg' | inline_asset_content -}}
+                                </span>
+                              </button>
+                            </quantity-input>
+							
+							
+							
+	or remove 
+	
+	      
+                               {% assign myLoopIndex = 'no_relation' | append: forloop.index %}
+                              {%- assign myRelationId = item.properties.bundle_ID | default: forloop.index  -%}
+
+                              {%- assign bundle_main = item.properties['main-product'] | default: forloop.index -%}
+                              {%- if bundle_main contains bundle_main -%}
+                                {%- assign bundle_main = bundle_main -%}
+                                <cart-remove-button
+                                  id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
+                                  data-index="{{ item.index | plus: 1 }}"
+                                  data-key="{{ item.key }}"
+                                  data-relation-id="{{ myRelationId }}"
+                                  data-quantity-variant-id="{{ item.variant.id }}"
+                                  data-main-product="{{ bundle_main}}"
+                                >
+                                  <button
+                                    type="button"
+                                    class="button button--tertiary cart-remove-button"
+                                    aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
+                                    data-variant-id="{{ item.variant.id }}"
+                                  >
+                                    <span class="svg-wrapper">
+                                      {{- 'icon-remove.svg' | inline_asset_content -}}
+                                    </span>
+                                  </button>
+                                </cart-remove-button>
+                              {%- else -%}
+                                <cart-remove-button
+                                  id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
+                                  data-index="{{ item.index | plus: 1 }}"
+                                  data-key="{{ item.key }}"
+                                     data-relation-id="{{  forloop.index }}"
+                                  data-quantity-variant-id="{{ item.variant.id }}"
+                                >
+                                  <button
+                                    type="button"
+                                    class="button button--tertiary cart-remove-button"
+                                    aria-label="{{ 'sections.cart.remove_title' | t: title: item.title | escape }}"
+                                    data-variant-id="{{ item.variant.id }}"
+                                  >
+                                    <span class="svg-wrapper">
+                                      {{- 'icon-remove.svg' | inline_asset_content -}}
+                                    </span>
+                                  </button>
+                                </cart-remove-button>
+                              {% endif %}
+	
+	
+	
+//product form changes
+
+        const formData = new FormData(this.form);
+
+
+          let productElements = document.querySelector('.bundle-inner');
+         let  quantity =document.querySelector("input[name=quantity]").value;
+         let  bundle_set;
+        try{
+          bundle_set =document.querySelector(".bundle_set").value ;
+        }catch{
+         bundle_set = Math.floor((Math.random() * 10) + 10000);
+        }
+
+            if(productElements && bundle_set!= null){
+        productElements =productElements.querySelectorAll("input[type=checkbox]:checked");  
+
+        productElements.forEach(function(input , index){
+          var variant_id = input.getAttribute("data_bundle_product");
+          var qunatity = quantity;
+           if (variant_id) {  
+          formData.append(`items[${index}][id]` , variant_id);
+          formData.append(`items[${index}][quantity]`, qunatity);
+          formData.append(`items[${index}][properties][bundle_ID]`, bundle_set);
+           }
+        });
+             formData.append(`[properties][bundle_ID]`, bundle_set);   
+
+           }
+
+//cart.js changes 
+
+class CartRemoveButton extends HTMLElement {
+  constructor() {
+    super();
+    this.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      const cartItems = this.closest('cart-items') || this.closest('cart-drawer-items');
+      let relationId = this.getAttribute("data-relation-id").trim();
+      console.log(relationId);
+      const mainBundle = this.dataset.mainProduct;
+      console.log(mainBundle);
+
+      let relatedProduct = document.querySelectorAll('.cart-item[data-relation-id="'+ relationId +'"]');
+      console.log(relatedProduct, "relatedProduct");
+
+      if (relatedProduct && relatedProduct.length > 1) {
+        
+         
+          relatedProduct.forEach(item => {
+            cartItems.updateQuantity(item.dataset.index, 0, '', '', relatedProduct);
+          });
+        
+      } else {
+         
+        cartItems.updateQuantity(this.dataset.index, 0, '', '');
+      }
+    });
+  }
+}
+
+
+// or quantity same k liye
+
+ if (message) {
+      this.setValidity(event, index, message);
+    } else {
+      event.target.setCustomValidity('');
+      event.target.reportValidity();
+      this.updateQuantity(
+        index,
+        inputValue,
+        document.activeElement.getAttribute('name'),
+        event.target.dataset.quantityVariantId
+      );
+
+      this.updateMetafieldProductsQuantity(event.target.dataset.quantityRelationId, inputValue);
+
+    }
+	
+	
+	updateMetafieldProductsQuantity(quantityRelationId, newQuantity) {       
+  fetch('/cart.js')
+    .then((response) => response.json())
+    .then((cart) => {
+       
+      const updates = {};
+      cart.items.forEach((item) => {
+          
+        if (item.properties && item.properties.bundle_ID  === quantityRelationId) {
+          updates[item.key] = newQuantity; 
+        }
+      });
+      
+      if (Object.keys(updates).length > 0) {
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            updates,
+            sections: this.getSectionsToRender().map((section) => section.section),
+            sections_url: window.location.pathname
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Failed to update cart quantities');
+            }
+            return response.json();
+          })
+          .then((updatedCart) => {
+            console.log('Cart updated successfully:', updatedCart);
+            this.getSectionsToRender().forEach((section) => {
+            const elementToReplace =
+            document.getElementById(section.id).querySelector(section.selector) || document.getElementById(section.id);
+            elementToReplace.innerHTML = this.getSectionInnerHTML(
+            updatedCart.sections[section.section],
+            section.selector
+          );
+        });         
+          })
+          .catch((error) => {
+            console.error('Error updating cart:', error);
+          });
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching cart data:', error);
+    });
+}
+
+  updateQuantity(line, quantity, name, variantId, relatedProducts) {
+   
+
+    let ajaxUrl = `${routes.cart_change_url}`;
+    let body;
+
+    if (relatedProducts && relatedProducts.length > 1) {
+         ajaxUrl = `${routes.cart_update_url}`;
+      let updates = {};
+      relatedProducts.forEach(item => {
+        updates[item.dataset.itemKey] = 0;  
+        this.enableLoading(line);
+        console.log(updates);
+      });
+
+      body = JSON.stringify({
+        updates,
+        sections: this.getSectionsToRender().map((section) => section.section),
+        sections_url: window.location.pathname,
+      });
+    } else {
+      this.enableLoading(line);
+      body = JSON.stringify({
+        line,
+        quantity,
+        sections: this.getSectionsToRender().map((section) => section.section),
+        sections_url: window.location.pathname,
+      });
+    }
+
+    fetch(`${ajaxUrl}`, { ...fetchConfig(), ...{ body } })
+      .then((response) => {
+        return response.text();
+      })
+      .then((state) => {
+        const parsedState = JSON.parse(state);
+        const quantityElement =
+          document.getElementById(`Quantity-${line}`) || document.getElementById(`Drawer-quantity-${line}`);
+        const items = document.querySelectorAll('.cart-item');
+
+        if (parsedState.errors) {
+          quantityElement.value = quantityElement.getAttribute('value');
+          this.updateLiveRegions(line, parsedState.errors);
+          return;
+        }
+
+        this.classList.toggle('is-empty', parsedState.item_count === 0);
+        const cartDrawerWrapper = document.querySelector('cart-drawer');
+        const cartFooter = document.getElementById('main-cart-footer');
+
+        if (cartFooter) cartFooter.classList.toggle('is-empty', parsedState.item_count === 0);
+        if (cartDrawerWrapper) cartDrawerWrapper.classList.toggle('is-empty', parsedState.item_count === 0);
+
+        this.getSectionsToRender().forEach((section) => {
+          const elementToReplace =
+            document.getElementById(section.id).querySelector(section.selector) || document.getElementById(section.id);
+          elementToReplace.innerHTML = this.getSectionInnerHTML(
+            parsedState.sections[section.section],
+            section.selector
+          );
+        });
+        const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
+        let message = '';
+        if (items.length === parsedState.items.length && updatedValue !== parseInt(quantityElement.value)) {
+          if (typeof updatedValue === 'undefined') {
+            message = window.cartStrings.error;
+          } else {
+            message = window.cartStrings.quantityError.replace('[quantity]', updatedValue);
+          }
+        }
+        this.updateLiveRegions(line, message);
+
+        const lineItem =
+          document.getElementById(`CartItem-${line}`) || document.getElementById(`CartDrawer-Item-${line}`);
+        if (lineItem && lineItem.querySelector(`[name="${name}"]`)) {
+          cartDrawerWrapper
+            ? trapFocus(cartDrawerWrapper, lineItem.querySelector(`[name="${name}"]`))
+            : lineItem.querySelector(`[name="${name}"]`).focus();
+        } else if (parsedState.item_count === 0 && cartDrawerWrapper) {
+          trapFocus(cartDrawerWrapper.querySelector('.drawer__inner-empty'), cartDrawerWrapper.querySelector('a'));
+        } else if (document.querySelector('.cart-item') && cartDrawerWrapper) {
+          trapFocus(cartDrawerWrapper, document.querySelector('.cart-item__name'));
+        }
+
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-items', cartData: parsedState, variantId: variantId });
+      })
+      .catch(() => {
+        this.querySelectorAll('.loading__spinner').forEach((overlay) => overlay.classList.add('hidden'));
+        const errors = document.getElementById('cart-errors') || document.getElementById('CartDrawer-CartErrors');
+        errors.textContent = window.cartStrings.error;
+      })
+      .finally(() => {
+        this.disableLoading(line);
+      });
+  }

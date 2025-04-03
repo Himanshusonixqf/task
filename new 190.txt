@@ -1,0 +1,321 @@
+shipping bar with gift 
+
+is class (js-contents) se content automatic update hoga  
+
+
+ <div class="page-width js-contents">
+  <div class="cart__footer isolate section-{{ section.id }}-padding">
+      {% assign showShippingBar = settings.show_shipping_bar %}
+
+      {% assign shipping-first = settings['shipping-first'] %}
+
+      {% assign shipping-second = settings['shipping-second'] %}
+      {% assign shipping_threshold = settings['shipping-threshold'] %}
+      {% assign cart_total_price = cart.total_price | divided_by: 100 %}
+      {% assign left_total_price = shipping_threshold | minus: cart_total_price %}
+
+      {% if showShippingBar %}
+        <div
+          class="cart-shipping-bar  {{ shipping_threshold }} {{ cart_total_price }} {{ left_total_price }}"
+          data-shipping-threshold="{{ shipping_threshold }}"
+          data-current-threshold="{{ cart_total_price }}"
+          data-shipping-message="
+            {% if cart_total_price >= shipping-second %}
+             {{ settings.gift-product-second.selected_or_first_available_variant.id }}
+
+            {% elsif  cart_total_price > shipping-first and cart_total_price < shipping-second %}
+            {{settings.gift-product-first.selected_or_first_available_variant.id }}
+              {% else %}
+              nothing
+              {% endif %}
+          "
+          data-unlocked="{{ unlockedMessage }}"
+          data-gwp-enabled="{{ showShippingBar }}"
+        >
+          {% if cart_total_price >= shipping-second %}
+            <script>
+              var ids = {{ settings.gift-product-second.selected_or_first_available_variant.id}}  ;
+              
+            </script>
+
+          {% elsif cart_total_price > shipping-first and cart_total_price < shipping-second %}
+            <script>
+               var ids = {{settings.gift-product-first.selected_or_first_available_variant.id }}  ;
+              
+            </script>
+          {% endif %}
+
+          {% assign percent = cart_total_price | times: 100 | divided_by: shipping_threshold %}
+          {% if percent > 100 %}
+            {% assign percent = 100 %}
+          {% elsif percent < 0 %}
+            {% assign percent = 0 %}
+          {% endif %}
+
+        
+          <div class="cart-free-shipping">
+            <span style="width: {{ percent }}%;"></span>
+          </div>
+
+          <p class="cart-more-shipping">
+            {% if cart_total_price < shipping_threshold %}
+              {% if leftSshippingMessage != blank %}
+                {{ leftSshippingMessage | replace: '$##amount', left_total_price }}
+              {% else %}
+                You are {{ left_total_price }} $ away from free large shipping.
+              {% endif %}
+            {% else %}
+              {% if unlockedMessage != blank %}
+                {{ unlockedMessage }}
+              {% else %}
+                FREE US SHIPPING
+              {% endif %}
+            {% endif %}
+          </p>
+        </div>
+      {% endif %}
+	  
+	  
+	  
+	  // script
+	  
+	  async function getCartData() {
+  let cartData = await fetch("/cart.json");
+  cartItemData = await cartData.json();
+  await checkIfGiftProductShouldBeAddedOrRemoved(cartItemData);
+  return cartItemData;
+}
+
+async function loadCart() {
+  let cartItemData = await getCartData();
+  console.log(cartItemData);
+}
+
+let gift1_id = 48733044965653;
+let gift2_id = 48740042899733;
+
+var CartType_has =
+  document.querySelector("cart-notification") ||
+  document.querySelector("cart-drawer");
+var cart_items_has = document.querySelector("cart-items");
+
+function checkIfGiftProductShouldBeAddedOrRemoved(cartItemData) {
+  console.log(cartItemData, "cartItemData");
+
+  const gift1InCart = cartItemData.items.find(
+    (item) => item.variant_id === gift1_id
+  );
+  const gift2InCart = cartItemData.items.find(
+    (item) => item.variant_id === gift2_id
+  );
+
+  if (cartItemData.total_price > 10000) {
+  
+    if (!gift2InCart) {
+      if (gift1InCart) {
+        removeGiftProductFromCart(gift1InCart.key)
+          .then(() => {
+            addGiftProductToCart(gift2_id);  
+          })
+          .catch((error) => console.error("Error removing gift1:", error));
+      } else {
+        addGiftProductToCart(gift2_id);  
+      }
+    }
+  } else if (
+    cartItemData.total_price >= 5000 &&
+    cartItemData.total_price <= 10000
+  ) {
+ 
+    if (!gift1InCart) {
+      if (gift2InCart) {
+        removeGiftProductFromCart(gift2InCart.key)
+          .then(() => {
+            addGiftProductToCart(gift1_id);  
+          })
+          .catch((error) => console.error("Error removing gift2:", error));
+      } else {
+        addGiftProductToCart(gift1_id); 
+      }
+    }
+  } else {
+    
+    if (gift1InCart) {
+      removeGiftProductFromCart(gift1InCart.key);
+    }
+    if (gift2InCart) {
+      removeGiftProductFromCart(gift2InCart.key);
+    }
+  }
+}
+
+function addGiftProductToCart(giftId) {
+  return new Promise((resolve, reject) => {
+    try {
+      const formData = new FormData();
+      formData.append(`items[0][id]`, giftId);
+      formData.append(`items[0][quantity]`, 1);
+
+      if (CartType_has) {
+        formData.append(
+          "sections",
+          CartType_has.getSectionsToRender().map((section) => section.id)
+        );
+        formData.append("sections_url", window.location.pathname);
+      } else {
+        formData.append(
+          "sections",
+          cart_items_has.getSectionsToRender().map((section) => section.section)
+        );
+        formData.append("sections_url", window.location.pathname);
+      }
+
+      fetch("/cart/add.js", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (CartType_has) {
+            CartType_has.renderContents(data);
+          } else {
+            cart_items_has.getSectionsToRender().forEach((section) => {
+              const elementToReplace =
+                document
+                  .getElementById(section.id)
+                  .querySelector(section.selector) ||
+                document.getElementById(section.id);
+              elementToReplace.innerHTML = cart_items_has.getSectionInnerHTML(
+                data.sections[section.section],
+                section.selector
+              );
+            });
+          }
+          resolve();  
+        })
+        .catch((error) => {
+          console.error("Error adding product to cart:", error);
+          reject(error);  
+        });
+    } catch (error) {
+      console.log("Error:", error);
+      reject(error);  
+    }
+  });
+}
+
+function removeGiftProductFromCart(giftProductKey) {
+  return new Promise((resolve, reject) => {
+    try {
+      
+      let formData = new FormData();
+
+      const requestData = {
+        sections: CartType_has
+          ? CartType_has.getSectionsToRender().map((section) => section.id)
+          : cart_items_has
+              .getSectionsToRender()
+              .map((section) => section.section),
+        sections_url: window.location.pathname,
+        id: giftProductKey,
+        quantity: 0,
+      };
+
+      fetch("/cart/change.js", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (CartType_has) {
+            CartType_has.querySelector(".drawer__inner").classList.contains(
+              "is-empty"
+            ) &&
+              CartType_has.querySelector(".drawer__inner").classList.remove(
+                "is-empty"
+              );
+            CartType_has.renderContents(data);
+            let isemmm = document.querySelector("cart-drawer-items");
+
+            if (isemmm.classList.contains("is-empty")) {
+              document.querySelector("cart-drawer").classList.add("is-empty");
+            }
+          } else {
+            cart_items_has.getSectionsToRender().forEach((section) => {
+              const elementToReplace =
+                document
+                  .getElementById(section.id)
+                  .querySelector(section.selector) ||
+                document.getElementById(section.id);
+              elementToReplace.innerHTML = cart_items_has.getSectionInnerHTML(
+                data.sections[section.section],
+                section.selector
+              );
+            });
+          }
+          resolve();  
+        })
+        .catch((error) => {
+          console.error("Error removing product from cart:", error);
+          reject(error);  
+        });
+    } catch (error) {
+      console.log("Error:", error);
+      reject(error);  
+    }
+  });
+}
+
+
+
+Now oncartupdate or   updateQuantity(line, quantity, name, variantId)  pr  function call  loadCart();
+
+ onCartUpdate() {
+    if (this.tagName === "CART-DRAWER-ITEMS") {
+      fetch(`${routes.cart_url}?section_id=cart-drawer`)
+        .then((response) => response.text())
+        .then((responseText) => {
+          const html = new DOMParser().parseFromString(
+            responseText,
+            "text/html"
+          );
+          const selectors = ["cart-drawer-items", ".cart-drawer__footer"];
+          for (const selector of selectors) {
+            const targetElement = document.querySelector(selector);
+            const sourceElement = html.querySelector(selector);
+            if (targetElement && sourceElement) {
+              targetElement.replaceWith(sourceElement);
+            }
+          }
+          loadCart();
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    } else {
+      fetch(`${routes.cart_url}?section_id=main-cart-items`)
+        .then((response) => response.text())
+        .then((responseText) => {
+          const html = new DOMParser().parseFromString(
+            responseText,
+            "text/html"
+          );
+          const sourceQty = html.querySelector("cart-items");hip
+          this.innerHTML = sourceQty.innerHTML;
+          loadCart();
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  }
+	  
+	  
+	  
+	  
+	  
+	  
+	  

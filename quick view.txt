@@ -1,0 +1,63 @@
+ <div class="quick_view_cstm">
+            <button
+              type="submit"
+              name="add"
+              class="cstm_Featured_btn button button--full-width button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add animate-arrow{% endif %}"
+              data_product_url="{{ card_product.url }}"
+            >
+              Quickview
+            </button>
+			
+			
+          </div>  
+ {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
+		
+	
+and theme.liquid
+
+	
+		      <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    
+        <div class="quick_view_popup_inner">
+      <div class="cstm_quickview_modal">
+        <div class="cstm_quick_view_model"></div>
+      </div>
+      <span class="cross">&#10005;</span>
+    </div>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const quickViewButtons = document.querySelectorAll(".cstm_Featured_btn");
+  const quickViewModel = document.querySelector(".cstm_quick_view_model");
+  quickViewButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      fetch(button.getAttribute("data_product_url"))
+        .then((response) => response.text())
+        .then((responseText) => {
+          const responseHTML = new DOMParser().parseFromString(
+            responseText,
+            "text/html"
+          );
+        
+          
+          const productElement = responseHTML.querySelector("product-info");
+          if (productElement) {
+              console.log(productElement.outerHTML);
+            quickViewModel.innerHTML = productElement.outerHTML;
+            HTMLUpdateUtility.setInnerHTML(
+              quickViewModel,
+              productElement.outerHTML
+            );
+            document.querySelector(".quick_view_popup_inner").style.display =
+              "block";
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching product details:", error);
+        });
+    });
+  });
+  });
+  document.querySelector(".cross").addEventListener("click", function () {
+    document.querySelector(".quick_view_popup_inner").style.display = "none";
+  });

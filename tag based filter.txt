@@ -1,0 +1,172 @@
+ 
+{%- style -%}
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+        padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+      }
+     .tagfilter-container {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: fit-content;
+  }
+    .tagfilter-container  li.tag-filters__item {
+      list-style: none;
+  }
+    .tagfilter-container .accordion-content {
+
+      padding: 0;
+
+  }
+  a.tag_filter_item {
+      color: white;
+      text-decoration: none;
+      background: gray;
+      padding: 4px 20px;
+      display: inline-block;
+      width: 100%;
+  }
+      a.tag_filter_item.active {
+        background-color: black;
+    }
+     .flex_with_filter.page-width {
+        display: grid;
+        grid-template-columns: 200px auto;
+        gap: 20px;
+    }
+
+      @media screen and (min-width: 750px) {
+        .section-{{ section.id }}-padding {
+          padding-top: {{ section.settings.padding_top }}px;
+          padding-bottom: {{ section.settings.padding_bottom }}px;
+        }
+      }
+{%- endstyle -%}
+
+ {%- if collection -%}
+            <div class="tagfilter-container accordion-item">
+              {% if collection.all_tags.size > 0 %}
+                <button class="h2 accordion-header" id="accordion-header-1">Tag filter</button>
+                <ul class="accordion-content">
+                  {% for tag in collection.all_tags %}
+                    {% if current_tags contains tag %}
+                      <li class="tag-filters__item active">
+                        <a
+                          class="tag_filter_item active"
+                          href="?q=tag:{{ tag }}"
+                          data_tag="{{ tag | handleize }}"
+                          collectionHandle="{{ collection.handle }}"
+                        >
+                          {{ tag }}
+                        </a>
+                      </li>
+                    {% else %}
+                      <li class="tag-filters__item">
+                        <a
+                          class="tag_filter_item "
+                          href="?q=tag:{{ tag }}"
+                          data_tag="{{ tag | handleize }}"
+                          collectionHandle="{{ collection.handle }}"
+                        >
+                          {{ tag }}
+                        </a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endif %}
+        </aside>
+		
+		
+		function handle_tag_filter(tagFilterItem, e) {
+  e.preventDefault();
+
+  const tag = tagFilterItem.getAttribute("data_tag");
+  const currentPath = window.location.pathname;
+  const pathParts = currentPath.split("/");  
+  let basePath = currentPath;
+
+  let existingFilters = [];
+ 
+  if (pathParts.length > 2 && pathParts[pathParts.length - 2] !== "collections") {
+    basePath = pathParts.slice(0, -1).join("/");  
+    existingFilters = pathParts[pathParts.length - 1].split("+"); 
+  }
+  
+  tagFilterItem.classList.add("active");
+  
+  let updatedFilters;
+  if (existingFilters.includes(tag)) {
+    updatedFilters = existingFilters.filter(existingTag => existingTag !== tag);
+  } else { 
+    updatedFilters = [...existingFilters, tag];   
+  }
+ 
+  const newUrl = updatedFilters.length > 0
+    ? `${basePath}/${updatedFilters.join("+")}`  
+    : basePath; 
+
+  console.log("Updated URL:", newUrl);
+ 
+  const sectionId = "shopify-section-template--22253040402709__product-grid";
+  
+  history.pushState({}, '', newUrl);
+ 
+  fetch(`${newUrl}?sections_id=${sectionId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(htmlContent => {
+      const parser = new DOMParser();
+      const parsedDocument = parser.parseFromString(htmlContent, "text/html");
+
+      const updatedSection = parsedDocument.querySelector(`#${sectionId}`);
+      if (updatedSection) {
+        const targetElement = document.querySelector(`#${sectionId}`);
+        if (targetElement) {
+          targetElement.innerHTML = updatedSection.innerHTML;
+         
+           
+          document.querySelectorAll(".tag_filter_item").forEach(tagFilterItem => {
+            tagFilterItem.addEventListener("click", (e) => handle_tag_filter(tagFilterItem, e));
+          });
+           reinitializeAccordion();
+        } else {
+          console.error("Target element not found on the page.");
+        }
+      } else {
+        console.error(`Section with ID ${sectionId} not found in fetched content.`);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching or updating the section:", error);
+    });
+}
+
+ 
+
+document.querySelectorAll(".tag_filter_item").forEach(tagFilterItem => {   
+  tagFilterItem.addEventListener("click", (e) => handle_tag_filter(tagFilterItem, e));
+});
+
+function reinitializeAccordion() {
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+  accordionHeaders.forEach(header => {
+    header.addEventListener('click', function () {
+      const item = this.parentElement;
+      const content = item.querySelector('.accordion-content');
+      item.classList.toggle('open');
+      if (item.classList.contains('open')) {
+        content.style.display = 'block';
+      } else {
+        content.style.display = 'none';
+      }
+    });
+  });
+}
+reinitializeAccordion()

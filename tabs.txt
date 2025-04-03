@@ -1,0 +1,198 @@
+<div class="tabs_section"> 
+<div class="section-content  page_width_customize">
+ 
+  <ul class="tabs">
+    {% for block in section.blocks %}
+      <li>
+        <a href="#tab-{{ block.id }}" class="tab-link {% if forloop.first %}active{% endif %}">
+          {{ block.settings.tab_heading | strip_html }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+ 
+  {% for block in section.blocks %}
+    <div id="tab-{{ block.id }}" class="tab-content {% if forloop.first %}active{% endif %}">
+      <div>{{ block.settings.tab_content }}</div>
+    </div>
+  {% endfor %}
+ 
+  <div class="accordion">
+    {% for block in section.blocks %}
+      <div class="accordion-item">
+        <button class="accordion-header" data-target="#accordion-{{ block.id }}">
+          {{ block.settings.tab_heading | strip_html }}
+        </button>
+        <div id="accordion-{{ block.id }}" class="accordion-content">
+          <div>{{ block.settings.tab_content }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
+
+
+<style>
+ 
+  .tabs_section{
+    padding:40px 0;
+  }
+.tabs {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tab-link {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+  margin-right: 10px;
+    color: #ffff;
+    border-radius: 9px;
+    background: gray;
+}
+
+.tab-link.active {
+    font-weight: bold;
+    color: #ffff;
+   
+    background: black;
+   
+}
+ 
+.tab-content {
+  display: none;  
+}
+
+.tab-content.active {
+  display: block;  
+}
+
+ 
+.accordion {
+  display: none;  
+}
+
+.accordion-item {
+  margin-bottom: 10px;
+}
+
+.accordion-header {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+}
+
+.accordion-content {
+  display: none;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+/* Media query for mobile */
+@media screen and (max-width: 768px) {
+ 
+  .accordion {
+    display: block;
+  }
+
+ 
+  .tabs {
+    display: none;
+  }
+
+  .tab-content {
+    display: none; 
+  }
+
+  .tab-content.active {
+    display: none;  
+  }
+
+  .accordion-content.active {
+    display: block; 
+  }
+}
+
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+ 
+  const tabs = document.querySelectorAll(".tab-link");
+  const tabContents = document.querySelectorAll(".tab-content");
+ 
+  tabs[0].classList.add("active");
+  tabContents[0].classList.add("active");
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      // Remove 'active' class from all tabs and contents
+      tabs.forEach((t) => t.classList.remove("active"));
+      tabContents.forEach((content) => content.classList.remove("active"));
+
+      // Add 'active' class to the clicked tab and corresponding content
+      this.classList.add("active");
+      const targetContent = document.querySelector(this.getAttribute("href"));
+      targetContent.classList.add("active");
+    });
+  });
+
+  // Accordion functionality (for Mobile)
+ 
+
+ 
+  
+});
+
+</script>
+
+
+{% schema %}
+ 
+{
+  "name": "Gift Customize Section",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Tab Block",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "tab_heading",
+          "default": "Tab Heading",
+          "label": "Tab Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "tab_content",
+          "default": "<p>This is the content for the tab.</p>",
+          "label": "Tab Content"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift Customize Section"
+    }
+  ]
+}
+
+
+{% endschema %}
+
+

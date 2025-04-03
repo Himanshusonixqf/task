@@ -1,0 +1,403 @@
+<style>
+.image-with-q-wrapper.section--padded.horizontal-on {
+    padding: 60px 0;
+}
+
+.container {
+    max-width: 100%;
+    padding: 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.image-with-q-main-w-pagination {
+    position: sticky;
+    top: -70px;
+    overflow: hidden;
+}
+
+.image-with-q-main {
+    margin-bottom: 36px;
+}
+
+.section--padded horizontal-on .section-header {
+    margin-bottom: 108px;
+}
+
+.section-header h2 {
+    font-size: 42px;
+    font-weight: 500;
+    text-align: center;
+    color: #013247;
+}
+
+.section--padded horizontal-on .section-header {}
+
+.image-with-q-wrapper.section--padded.horizontal-on .section-header {
+    margin-bottom: 108px;
+}
+
+.image-with-q-blocks-slider {
+    display: flex;
+    justify-content: space-between;
+    row-gap: 50px;
+    flex-shrink: 0;
+    width: 100%;
+    transition-property: transform;
+}
+
+.image-with-q-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    margin-right: 50px;
+}
+
+.image-with-q-blocks>.image-with-q-block-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.image-with-q-text {
+    max-width: 43.2%;
+}
+
+.image-with-q-img {
+    max-width: 49.17%;
+    width: 100%;
+    text-align: end;
+}
+
+h4.das-heading {
+    font-size: 21px;
+    font-weight: 700;
+    color: #296ba9;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+}
+
+h3.img-q-title {
+    font-size: 33px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    line-height: 1.18;
+}
+
+.img-q-text {
+    font-size: 21px;
+    line-height: 1.53;
+}
+
+.img-q-list-main {
+    margin-bottom: 27px;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.img-q-list-main ul li {
+    display: flex;
+    align-items: center;
+    line-height: 2;
+    margin-bottom: 12px;
+}
+
+.img-q-list-main ul li:before {
+    content: '';
+    background-image: url('https://cdn.shopify.com/s/files/1/0620/2916/8863/files/right.svg?v=1736164346');
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+a.btn.btn--primary {
+    padding: 15px 27px;
+    border-radius: 50px;
+    min-width: 111px;
+    background: #296ba9;
+    color: #fff;
+    text-decoration: none;
+}
+
+h4.das-heading:before {
+    content: " ";
+    display: block;
+    width: 20px;
+    height: 3px;
+    background: #296ba9;
+    margin-right: 5px;
+}
+
+.image-with-q-img img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: top;
+    width: 100%;
+}
+
+.image-with-q-blocks:last-child {
+    margin-right: 0;
+}
+
+.quiz-pagination {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;););););
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.quiz-counter {
+    font-size: 21px;
+    min-width: 50px;
+}
+
+span.das-line {
+    margin-inline: 4px;
+}
+
+.quiz-counter-fill {
+    max-width: 100%;
+    width: 100%;
+    line-height: 32px;
+    padding: 0 30px;
+}
+
+span.fill-border {
+    width: 100%;
+    height: 3px;
+    display: block;
+    background: #e5e5e5;
+}
+
+.quiz-arrows {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 75px;
+    justify-content: space-between;
+}
+
+.quiz-arrows svg {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+svg.prev-btn {
+    transform: rotate(180deg);
+}
+</style>
+
+{% assign main_heading = section.settings.main_heading %}
+{% assign subheading = section.settings.subheading  %}
+{% assign heading = section.settings.heading  %}
+{% assign para = section.settings.content1 %}
+{% assign paragraph = section.settings.content2 %}
+{% assign btn_url =  section.settings.btn_url %}
+{% assign btn_text =  section.settings.btn_text %}
+{% assign image = section.settings.img  %}
+
+{% capture slider_html %}
+    <div class="image-with-q-block-row">
+       <div class="image-with-q-text">
+           {% if heading != blank %}
+            <h4 class="das-heading">{{ subheading }}</h4>
+           {% endif %}
+           {% if heading != blank %}
+             <h3 class="img-q-title">{{ heading }}</h3>
+            {% endif %}
+           {% if para != blank %}
+            <div class="img-q-text">{{ para }}</div>
+           {% endif %}
+           {% if  paragraph != blank %}
+            <div class="img-q-list-main">
+              {{ paragraph }}
+            </div>
+           {% endif %}
+         {% if btn_text != blank %}
+           <a href="{{ btn_url }}" class="btn btn--primary">{{ btn_text }}</a>
+         {% endif %}
+       </div>
+      {% if image != blank %}
+        <div class="image-with-q-img">
+          <img src="{{ image | img_url:'master' }}" alt="{{ heading }}" width="" height="">
+        </div>
+      {% endif %}
+    </div>
+{% endcapture %}
+  
+<section id="{{ section.id }}" class="shopify-section itg_main_slider">
+  <div class="image-with-q-wrapper section--padded horizontal-on">
+     <div class="container">
+        <div class="image-with-q-main-w-pagination">
+          <div class="image-with-q-main">
+             {% if  main_heading != blank %}
+               <div class="section-header">
+                <h2>{{ main_heading }}</h2>
+               </div>
+             {% endif %}
+              <div class="image-with-q-blocks-slider">
+                 {% for i in (1..3) %}
+                   <div class="image-with-q-blocks image-with-q-block-{{ forloop.index }}">
+                     {{ slider_html }}
+                   </div>
+                 {% endfor %}
+              </div>             
+            </div>
+            <div class="quiz-pagination">
+              <div class="quiz-counter">
+                <span class="q-cur-count">1</span>
+                <span class="das-line">-</span>
+                <span class="q-total-count">3</span>
+              </div>
+              <div class="quiz-counter-fill">
+                <span class="fill-border"></span>
+              </div>
+              <div class="quiz-arrows">
+                <svg class="prev-btn" xmlns="http://www.w3.org/2000/svg" width="23" height="19" viewBox="0 0 23 19" fill="none">
+                  <path d="M21.3333 9.63428L1.33331 9.63428" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M13.2669 1.60166L21.3336 9.63366L13.2669 17.667" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg class="next-btn" xmlns="http://www.w3.org/2000/svg" width="23" height="19" viewBox="0 0 23 19" fill="none">
+                  <path d="M21.3333 9.63428L1.33331 9.63428" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M13.2669 1.60166L21.3336 9.63366L13.2669 17.667" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>                                
+        </div>
+     </div>
+  </div>
+</section>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    const slider = document.querySelector(".image-with-q-blocks-slider");
+    const wrapper = document.querySelector(".image-with-q-wrapper");
+    const blocks = document.querySelectorAll(".image-with-q-blocks");
+
+    const blockWidth = blocks[0].offsetWidth + 50;
+    console.log("block_width",blockWidth);
+    const totalScroll = blockWidth * (blocks.length - 1);
+    console.log("totalScroll",totalScroll);
+    wrapper.querySelector(".container").style.height = `${totalScroll + wrapper.offsetHeight}px`;
+  
+    window.addEventListener("scroll", () => {
+        const scroll = Math.max(0, window.pageYOffset - wrapper.offsetTop - 200);
+     console.log("scroll",scroll);
+        slider.style.transform = `translateX(-${Math.min(totalScroll, scroll)}px)`;
+
+        document.querySelector("span.q-cur-count").innerText = Math.round(scroll / blockWidth) + 1;
+
+        const arrows = document.querySelector(".quiz-arrows");
+        const pagination = document.querySelector(".image-with-q-main-w-pagination");
+        arrows.style.display = pagination.getBoundingClientRect().top === -70 ? "block" : "none";
+    });
+
+    document.querySelectorAll(".quiz-arrows svg").forEach(arrow => {
+      console.log(arrow,"arrow")
+        arrow.addEventListener("click", function(){
+            const currentBlock = Number(document.querySelector("span.q-cur-count").innerText);
+           console.log(currentBlock,"arrow")
+            // const nextBlock = this.classList.contains("next-btn") ? currentBlock + 1 : Math.max(1, currentBlock - 1);
+     let nextBlock;
+          let targetBlock 
+          if(this.classList.contains("next-btn")){
+          nextBlock =  currentBlock + 1 ;
+            targetBlock = document.querySelector(`.image-with-q-block-${nextBlock}`);
+               if (targetBlock) {
+              window.scrollTo({
+              top: window.pageYOffset + targetBlock.offsetLeft,
+              behavior: 'smooth'
+              });
+            }
+            
+          }
+          else if (this.classList.contains("prev-btn")){
+           nextBlock =  Math.max(1, currentBlock);
+             console.log(nextBlock,"nextBlockarrow")
+               targetBlock = document.querySelector(`.image-with-q-block-${nextBlock}`);    
+               if (targetBlock) {
+              window.scrollTo({
+              top: targetBlock.offsetLeft,
+              behavior: 'smooth'
+              });
+            }
+              console.log(targetBlock,"targetBlock")
+          }
+
+        
+        });
+    });
+});
+
+</script>
+{% schema %}
+  {
+    "name": "Custom Slider Image",
+    "settings": [
+      {
+        "type":"text",
+        "id":"main_heading",
+        "label":"Main Heading"
+      },
+      {
+        "type":"image_picker",
+        "id":"img",
+        "label":"Image"
+      },
+      {
+        "type":"text",
+        "id":"subheading",
+        "label":"Sub Heading"
+      },
+      {
+        "type":"text",
+        "id":"heading",
+        "label":"Heading"
+      },
+      {
+        "type":"richtext",
+        "id":"content1",
+        "label":"Content"
+      },
+      {
+        "type":"richtext",
+        "id":"content2",
+        "label":"Content"
+      },
+      {
+        "type":"text",
+        "id":"btn_text",
+        "label":"Button Text"
+      },
+       {
+        "type":"url",
+        "id":"btn_url",
+        "label":"Button Url"
+      }
+    ],
+    "presets":[
+      {
+        "name":"Custom Slider Image"
+      }
+    ]
+  }
+{% endschema %}

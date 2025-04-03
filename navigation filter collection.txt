@@ -1,0 +1,65 @@
+<section class="filter_custom">  
+     <div class="collection_filter">
+        <h2>Shop By:</h2>
+        <div class="navigation_filter">
+          {% assign menu = section.settings.collection_navigation %}
+          {% if menu.links.size > 0 %}
+            {% for link in menu.links %}
+              <a href="{{ link.url }}" class="navigation_menus" data-handle="{{ link.handle }}">
+                <span>{{ link.title }}</span>
+                {% if  link.object.image %}
+                  <img src="{{ link.object.image | img_url: 'master' }}" alt="{{ link.title }}" width="40" height="40">
+                {% endif %}
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
+        </div>
+
+<div class="data_except_custom">
+<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}  customize_aside">
+
+
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<script src="{{ 'collection-grid.js' | asset_url }}" defer="defer"></script>
+
+
+
+console.log('test88');
+    document.querySelectorAll(".navigation_menus").forEach(function (navItemBtn) {
+      navItemBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+         let collectionHandle = this.dataset.handle;
+        const newUrl = `/collections/${collectionHandle}`;
+        history.pushState({ collection: collectionHandle }, '', newUrl);
+        
+        fetch(newUrl+"?sections_id=shopify-section-template--22238765777173__product-grid")
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      // console.log(res);
+      return res.text();
+    })
+    .then((data) => {
+      console.log("HTML content fetched:", data);
+      const parser = new DOMParser();
+      const parsedDocument = parser.parseFromString(data, "text/html");
+      console.log(parsedDocument);
+    const updatedSection = parsedDocument.querySelector("#shopify-section-template--22238765777173__product-grid").innerHTML;
+      if (updatedSection) {
+        document.querySelector("#shopify-section-template--22238765777173__product-grid").innerHTML = updatedSection;
+        HTMLUpdateUtility.setInnerHTML(document.querySelector("#shopify-section-template--22238765777173__product-grid"), parsedDocument.querySelector("#shopify-section-template--22238765777173__product-grid").outerHTML);
+      } else {
+        console.error("Product grid not found.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching section data:", error);
+    });
+  
+      });
+    });

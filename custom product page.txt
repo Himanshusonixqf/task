@@ -1,0 +1,1085 @@
+{{ 'section-gift-customize.css' | asset_url | stylesheet_tag }}
+
+.product-page {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    gap: 20px;
+  
+}
+
+.page_width_customize {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.media_conntainr {
+    display: flex;
+    width: 100%;
+}
+.qtySelector_product {
+  max-width: 250px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  border: 1px solid;
+  padding: 4px;
+  align-items: center;
+  /* font-size: 17px; */
+}
+
+.qtySelector_product button {
+ 
+    cursor: pointer;
+}
+.left-thumbnails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.thumbnail-slider .thumbnails {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 450px;
+    scrollbar-width: none;
+    padding: 20px 0;
+}
+
+.thumbnail-item {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.thumbnail-image,
+.thumbnail-video {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.product-media-slider {
+  flex: 1;
+  padding: 10px;
+}
+
+.thumbnail-slider button {
+    background-color: #ccc;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px auto;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.thumbnail-item {
+  padding: 5px;
+  cursor: pointer;
+  border: 2px solid transparent; /* Default border */
+  transition: border 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.thumbnail-item.active {
+  border: 2px solid #000; 
+  transform: scale(1.1);  
+  
+}
+.thumbnail-item img {
+    filter: opacity(0.5);
+}
+
+.thumbnail-item.active img {
+    filter: opacity(1);
+}
+
+.product-media-slider .media-item {
+  display: none; /* Hide all media items by default */
+}
+
+.product-media-slider .media-item.visible {
+    display: block;
+    max-width: 100%;
+}
+.product-media-slider .media-item.visible img {
+     
+    max-width: 100%;
+}
+/* Style for custom size dropdown */
+.size-dropdown {
+  position: relative;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-button {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none; /* Hide menu by default */
+  z-index: 10;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-menu.show {
+  display: block; /* Show menu when 'show' class is added */
+}
+
+.dropdown-item {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-item.selected {
+  background-color: black;
+  color: white;
+}
+
+/* Style for color swatches */
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 5px;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  transition: border-color 0.3s ease;
+}
+
+.color-swatch.selected {
+  outline: 1px solid gray;
+  outline-offset: 1px;
+}
+
+.color_options {
+  display: flex;
+  align-items: start;
+}
+
+/* Loader Style */
+.btn-add-to-cart {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.btn-add-to-cart:hover {
+  background-color: #000;
+}
+
+.btn-add-to-cart .loader   {
+  display: none;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.cart__remove_btn  .loader {
+    width: 16px;
+  height: 16px;
+  border: 2px solid red; 
+    border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Loader animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-add-to-cart.loading , .cart__remove_btn.loading{
+  pointer-events: none;  
+}
+
+ .loading .loader ,  .loading  .loader {
+  display: inline-block;
+}
+
+
+ .loading span , .loading  span {
+  visibility: hidden;  
+}
+
+/* Toast Notification Styles */
+.toast-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-notification a {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.toast-notification a:hover {
+  color: #ddd;
+}
+
+/* Accordion container */
+.accordion {
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Accordion item */
+.accordion-item {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* Accordion header (clickable area) */
+.accordion-header {
+    background-color: #f7f7f7;
+    padding: 15px;
+    font-size: 16px;
+    text-align: left;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.4rem;
+    color: rgba(var(--color-foreground), 0.75);
+}
+
+.accordion-header:hover {
+  background-color: #e0e0e0;
+}
+
+/* Accordion icon */
+.accordion-icon {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Accordion content (hidden by default) */
+.accordion-content {
+  display: none;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+}
+
+.accordion-item.open .accordion-content {
+  display: block;
+}
+
+.accordion-item.open .accordion-icon {
+  transform: rotate(45deg); /* Change icon on open */
+}
+
+
+@media screen and (max-width: 768px) {
+.product-page {
+    grid-template-columns: auto;
+    gap: 10px;
+    
+}
+  
+.media_conntainr {
+    display: flex;
+    flex-direction: column-reverse;
+    /* align-items: center; */
+    width: 100%;
+    max-width: 100%;
+    overflow: auto;
+} 
+
+.thumbnail-slider {
+    /* max-width: 100%; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    overflow: auto;
+}
+  .product-media-slider {    
+    margin: 0 auto;
+}
+.thumbnail-slider .thumbnails {
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    /* width: 100%; */
+    /* padding: 0px 10px; */
+    padding-inline: 10px;
+    overflow: auto;
+}
+  .product-media-slider .media-item.visible {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+}
+
+}
+ 
+
+
+<div class="page_width_customize section_gift_custom">
+<div class="product-page ">
+
+<div class="media_conntainr">
+ <div class="thumbnail-slider">
+  <button class="prev" id="prev-media">&lt;</button>
+  <div class="thumbnails">
+    {% for media in product.media %}
+      <div class="thumbnail-item">
+        {% if media.media_type == 'image' %}
+          <img src="{{ media.src | img_url: '100x' }}" media_id ="{{ media.id }}" alt="{{ media.alt }}">
+        {% elsif media.media_type == 'video' %}
+          <video>
+            <source src="{{ media.preview_video | file_url }}" type="video/mp4">
+          </video>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <button class="next" id="next-media">&gt;</button>
+</div>
+
+  <div class="product-media-slider">
+ 
+    {% for media in product.media %}
+      {% if media.media_type == 'image' %}
+        <div class="media-item" data-color="{{ media.alt | downcase }}">
+          <img src="{{ media.preview_image | img_url: '600x' }}" media_id ="{{ media.id }}" alt="{{ media.alt }}" class="product-media-image">
+        </div>
+      {% elsif media.media_type == 'video' %}
+        <div class="media-item" data-color="{{ media.alt | downcase }}">
+          <video controls class="product-media-video">
+            <source src="{{ media.preview_video | file_url }}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  </div>  
+  
+  <div class="product-info">
+    <h2 class="h2">{{ product.title }}</h2>
+    <p>{{ product.description }}</p>
+    <p>Price: <span class="price_original">{{ product.price | money }}</span></p>
+ 
+    {% assign sizes = product.variants | map: 'option1' | uniq %}
+    {% if sizes.size > 1 %}
+    <div class="size-dropdown">
+      <label for="size">Select Size:</label>
+      <div class="dropdown-container">
+        <button class="dropdown-button" id="dropdown-button">Select Size</button>
+        <ul class="dropdown-menu" id="size-dropdown-menu">
+          {% for size in sizes %}
+            <li class="dropdown-item" data-size="{{ size }}">{{ size }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+ 
+    {% assign colors = product.variants | map: 'option2' | uniq %}
+    {% if colors.size > 1 %}
+    <div class="color-swatches">
+      <label for="color">Select Color:</label>
+      <div class="color_options"> 
+        {% for color in colors %}
+          <button class="color-swatch" data-color="{{ color }}" style="background-color: {{ color | downcase }};">
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+ 
+    {% for variant in product.variants %}
+      <input type="hidden" data_variant_status="{% if variant.available %}able {% else %} soldout {% endif %}" data-price="{{ variant.price | money }}" data-imgsrc="{{ variant.featured_media.id }}"  data-t="{{ variant.title }}" class="variant-input" data-size="{{ variant.option1 }}" data-color="{{ variant.option2 }}" value="{{ variant.id }}">
+    {% endfor %}
+
+         <span class="strong_clr"> Quantity</span>
+          <div class="qtySelector_product">
+            <button type="button" id="m-btn" class="minus" value="-">-</button>
+            <input
+              type="text"
+              name="updates[]"
+              id="updates_{{ forloop.index }}"
+              class="item-qty"
+              pattern="[0-9]*"
+              min="1"
+              data-quantity_variant="{{ product.id }}"
+              value="1"
+              data-quantity="1"
+            >
+            <button type="button" id="p-btn" class="plus" value="+">+</button>
+          </div>
+
+  
+    <button id="add-to-cart" class="btn-add-to-cart">
+      <div class="loader"></div>
+      <span>Add to Cart</span>
+    </button>
+
+ 
+    <div class="accordion-product-info">
+      <!-- Accordion Item 1 -->
+      <div class="accordion-item">
+        <button class="accordion-header" id="accordion-header-1">
+          <span>What is your return policy?</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-content">
+          <p>Our return policy allows you to return items within 30 days of purchase...</p>
+        </div>
+      </div>
+
+      <!-- Accordion Item 2 -->
+      <div class="accordion-item">
+        <button class="accordion-header" id="accordion-header-2">
+          <span>How long does shipping take?</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-content">
+          <p>Shipping usually takes between 3-7 business days depending on your location...</p>
+        </div>
+      </div>
+
+      <!-- Accordion Item 3 -->
+      <div class="accordion-item">
+        <button class="accordion-header" id="accordion-header-3">
+          <span>Do you offer gift wrapping?</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-content">
+          <p>Yes, we offer gift wrapping for a small additional charge...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div> 
+
+
+class PropertyCustom extends HTMLElement {
+  constructor() {
+    super();
+
+    // Initially hide the properties
+    this.propertiesVisible = false;
+
+    // Add event listener for click
+    this.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      // Toggle visibility of properties
+      this.propertiesVisible = !this.propertiesVisible;
+      const propertiesContainer = this.querySelector('.properties-container');
+      if (propertiesContainer) {
+        propertiesContainer.style.display = this.propertiesVisible ? 'block' : 'none';
+      }
+    });
+  }
+}
+
+customElements.define('custom-property', PropertyCustom);
+
+document.addEventListener("DOMContentLoaded", () => {
+ 
+  const thumbnails = document.querySelectorAll(".thumbnail-item");
+  const mainMediaItems = document.querySelectorAll(".product-media-slider .media-item");
+  const prevButton = document.querySelector("#prev-media");
+  const nextButton = document.querySelector("#next-media");
+  let activeIndex = 0; 
+ 
+  const updateActiveMedia = (index) => {
+ 
+    thumbnails.forEach((thumb) => thumb.classList.remove("active"));
+ 
+    mainMediaItems.forEach((mediaItem) => mediaItem.classList.remove("visible"));
+ 
+    thumbnails[index].classList.add("active");
+ 
+    mainMediaItems[index].classList.add("visible");
+ 
+    activeIndex = index;
+  };
+ 
+  const handleNextClick = () => {
+    const newIndex = (activeIndex + 1) % thumbnails.length;  
+    updateActiveMedia(newIndex);
+  };
+
+ 
+  const handlePrevClick = () => {
+    const newIndex = (activeIndex - 1 + thumbnails.length) % thumbnails.length;  
+    updateActiveMedia(newIndex);
+  };
+ 
+  thumbnails.forEach((thumbnail, index) => {
+    thumbnail.addEventListener("click", () => updateActiveMedia(index));
+  });
+
+ 
+  nextButton.addEventListener("click", handleNextClick);
+  prevButton.addEventListener("click", handlePrevClick);
+ 
+  if (thumbnails.length > 0 && mainMediaItems.length > 0) {
+    updateActiveMedia(0); 
+  }
+});
+
+
+
+
+let selectedSize = '';
+let selectedColor = '';
+let selectedVariantId = '';
+const productPage = document.querySelector(".product-page");
+const firstVariant = productPage.querySelector('.variant-input');
+if (firstVariant) {
+  selectedVariantId = firstVariant.value;
+  selectedSize = firstVariant.getAttribute('data-size');
+  selectedColor = firstVariant.getAttribute('data-color');
+}
+
+const dropdownButton = productPage.querySelector('.dropdown-button');
+const dropdownMenu = productPage.querySelector('.dropdown-menu');
+
+dropdownButton.addEventListener('click', function () {
+  dropdownMenu.classList.toggle('show');
+});
+
+const sizeItems = productPage.querySelectorAll('.dropdown-item');
+sizeItems.forEach((item) => {
+  item.addEventListener('click', function () {
+    selectedSize = this.getAttribute('data-size');
+    updateVariant();
+    dropdownButton.textContent = selectedSize;
+    dropdownMenu.classList.remove('show');
+    setSelectedClass(sizeItems, this);
+  });
+});
+
+const colorSwatches = productPage.querySelectorAll('.color-swatch');
+colorSwatches.forEach((swatch) => {
+  swatch.addEventListener('click', function () {
+    selectedColor = this.getAttribute('data-color');
+    updateVariant();
+    setSelectedClass(colorSwatches, this);
+  });
+});
+
+function setSelectedClass(elements, selectedElement) {
+  elements.forEach((el) => el.classList.remove('selected'));
+  selectedElement.classList.add('selected');
+}
+
+ 
+const matchDataImgSrc = (dataImgSrc) => {
+  const thumbnails = document.querySelectorAll(".thumbnail-item img"); 
+  let matchedIndex = -1;
+
+ 
+  thumbnails.forEach((thumbnail, index) => {
+    const thumbnailUrl = thumbnail.src.replace('100x', '600x');  
+    if (thumbnailUrl === dataImgSrc) {
+      matchedIndex = index;  
+    }
+  });
+
+  if (matchedIndex !== -1) {
+    
+    updateActiveMedia(matchedIndex);
+  } else {
+    console.warn("No matching thumbnail found for:", dataImgSrc);
+  }
+};
+
+ 
+function updateVariant() {
+  let matchingVariant = null;
+  if (!selectedSize) {
+    selectedSize = productPage.querySelector('.dropdown-item')?.getAttribute('data-size') || '';
+  }
+
+  if (!selectedColor) {
+    selectedColor = productPage.querySelector('.color-swatch')?.getAttribute('data-color') || '';
+  }
+
+  productPage.querySelectorAll('.variant-input').forEach((input) => {
+    const variantSize = input.getAttribute('data-size');
+    const variantColor = input.getAttribute('data-color');
+    if (variantSize === selectedSize && variantColor === selectedColor) {
+      matchingVariant = input;
+     let data_imgsrc = matchingVariant.getAttribute("data-imgsrc");
+     let data_variant_price = matchingVariant.getAttribute("data-price");
+     let data_variant_status = matchingVariant.getAttribute("data_variant_status");
+      console.log(data_variant_status);
+     let btn_add_to_cart = document.querySelector(".btn-add-to-cart");
+      if(data_variant_status== " soldout "){
+        btn_add_to_cart.disabled = true;
+        btn_add_to_cart.querySelector("span").innerText = "sold out";
+      }else{
+         btn_add_to_cart.disabled = false;
+        btn_add_to_cart.querySelector("span").innerText = "Add to cart";
+      }
+    document.querySelector(".price_original").innerText = data_variant_price;
+     const thumbnails = document.querySelectorAll(".thumbnail-item img");
+        thumbnails.forEach((thumbnail) => {
+      const thumbnailSrc = thumbnail.getAttribute("media_id");
+
+      
+      if (thumbnailSrc.includes(data_imgsrc)) {
+        
+        thumbnail.parentElement.click();
+      } else {
+       
+        thumbnail.parentElement.classList.remove("active");
+      }
+    });
+    }
+  });
+
+  if (matchingVariant) {
+    selectedVariantId = matchingVariant.value;
+  } else {
+    console.warn('No matching variant found');
+  }
+}
+function showToast(message, showCartLink = false) {
+   
+  const toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = message;
+
+ 
+  if (showCartLink) {
+    const cartLink = document.createElement('a');
+    cartLink.href = '#custom_cart';
+    cartLink.textContent = 'View Cart';
+    cartLink.setAttribute('aria-label', 'View Cart');
+    toast.appendChild(cartLink);
+    cartLink.addEventListener("click", updateDrawerCustom);
+    
+  }
+ 
+  const closeButton = document.createElement('button');
+  closeButton.className = 'toast-close';
+  closeButton.innerHTML = '&times;';  
+  closeButton.setAttribute('aria-label', 'Close notification');
+  toast.appendChild(closeButton);
+
+  
+  closeButton.addEventListener('click', () => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      toast.remove();
+    }, 300);  
+  });
+
+ document.body.appendChild(toast);
+ 
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 100);
+}
+ 
+let sectionKey = 'custom_cart';  
+let sectionKey_bubble = 'cart-icon-bubble';  
+
+document.querySelector('.btn-add-to-cart').addEventListener('click', function () {
+  const addToCartButton = this;
+  const loader = addToCartButton.querySelector('.loader');
+  const buttonText = addToCartButton.querySelector('span');
+  
+  addToCartButton.classList.add('loading');
+ let quantity = document.querySelector('.qtySelector_product input').value;
+  let formData = new FormData();
+  formData.append('items[0][id]', selectedVariantId);
+  formData.append('items[0][quantity]', quantity);
+  formData.append('sections',[sectionKey , sectionKey_bubble ] );   
+   
+  formData.append('sections_url', window.location.pathname);
+
+  fetch('/cart/add.js', {
+    method: 'POST',
+    body: formData,
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log('Item added to cart:', data);
+    console.log('Updated sections:', data.sections);
+
+    addToCartButton.classList.remove('loading');
+ 
+    const updatedCartSection = data.sections[sectionKey];   
+    const updatedCartbubble = data.sections["cart-icon-bubble"];   
+
+    if (updatedCartSection && updatedCartbubble) {
+      const cartContainer = document.querySelector('#custom_cart');
+      const cartbubble = document.querySelector('#cart-icon-bubble');     
+      cartbubble.innerHTML = updatedCartbubble;
+      showToast("product added" , true);
+     
+      
+    } else {
+      console.error('Section not found in response:', sectionKey);
+    }
+  })
+  .catch((error) => {
+    console.error('Error adding item to cart:', error);
+    addToCartButton.classList.remove('loading');
+   
+  });
+});
+
+function attachEventListenersToCart() {
+  // Attach the remove item event listener
+  document.querySelectorAll('.cart__remove_btn').forEach((button) => {
+    button.addEventListener('click', handleRemoveItem);
+  });
+
+  // Attach the quantity change event listeners
+  document.querySelectorAll(".qtySelector").forEach((qtySelector) => {
+    handleQuantity(qtySelector);
+  });
+
+  // Attach the close drawer event listener
+  const closeDrawerButton = document.querySelector('.closed_drawer');
+  if (closeDrawerButton) {
+    closeDrawerButton.addEventListener('click', closeDrawer);
+  }
+    const custom_cart_Overlay = document.querySelector('#custom_cart-Overlay');
+  if (custom_cart_Overlay) {
+    custom_cart_Overlay.addEventListener('click', closeDrawer);
+  }
+}
+
+
+
+// Show Toast function with an optional link to view cart
+function showToast(message, showCartLink = false) {
+  const toast = document.createElement('div');
+  toast.className = 'toast-notification';
+  toast.innerHTML = message;
+
+  // If the flag showCartLink is true, add a "View Cart" link to the toast
+  if (showCartLink) {
+    const cartLink = document.createElement('a');
+    cartLink.href = '/cart';
+    cartLink.textContent = 'View Cart';
+    cartLink.setAttribute('aria-label', 'View Cart');
+    toast.appendChild(cartLink);
+
+    // Open the cart drawer when the "View Cart" link is clicked
+    cartLink.addEventListener('click', (event) => {
+      event.preventDefault();  // Prevent default behavior (navigate to /cart)
+      openDrawer();  
+      updateDrawerCustom(); // Open the cart drawer
+    });
+  }
+
+  // Append the toast to the document body
+  document.body.appendChild(toast);
+
+  // Make the toast appear
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 100);
+
+  // Hide the toast after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+
+function openDrawer() {
+  document.querySelector('#custom_cart').classList.add('opendrawer');   
+  updateDrawerCustom();   
+}
+
+
+function closeDrawer() {
+  document.querySelector('#custom_cart').classList.remove('opendrawer');
+}
+
+ 
+function updateDrawerCustom() {
+  fetch(`${routes.cart_url}?section_id=custom_cart`)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.text();
+    })
+    .then((data) => {
+      const parser = new DOMParser();
+      const parsedDocument = parser.parseFromString(data, 'text/html');
+      const updatedSection = parsedDocument.querySelector('#custom_cart').innerHTML;
+
+      if (updatedSection) {
+        const productGrid = document.querySelector('#custom_cart');
+        
+        productGrid.innerHTML = updatedSection;
+        
+      } else {
+        console.error('Drawer not found.');
+      }
+      attachEventListenersToCart();
+    })
+    .catch((error) => {
+      console.error('Error fetching section data:', error);
+    });
+}
+
+function handleRemoveItem(e) {
+  e.preventDefault();
+  const cart__remove_btn = this;
+  const loader = cart__remove_btn.querySelector('.loader');
+  const buttonText = cart__remove_btn.querySelector('span');
+
+  cart__remove_btn.classList.add('loading');
+  let selectedVariantId = this.getAttribute("data-line");
+  let formData = new FormData();
+  formData.append('line', selectedVariantId);
+  formData.append('quantity', 0);
+   formData.append('sections',[sectionKey , sectionKey_bubble ] ); 
+  formData.append('sections_url', window.location.pathname);
+
+  fetch('/cart/change.js', {
+    method: 'POST',
+    body: formData,
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log('Item removed from cart:', data);
+    console.log('Updated sections:', data.sections);
+
+    cart__remove_btn.classList.remove('loading');
+    const updatedCartSection = data.sections[sectionKey];   
+    const updatedCartbubble = data.sections["cart-icon-bubble"];   
+
+    if (updatedCartSection && updatedCartbubble) {
+      const cartContainer = document.querySelector('#custom_cart');
+      const cartbubble = document.querySelector('#cart-icon-bubble');     
+      cartbubble.innerHTML = updatedCartbubble;
+       updateDrawerCustom();
+    } else {
+      console.error('Section not found in response:', sectionKey);
+    }
+  })
+  .catch((error) => {
+    console.error('Error removing item from cart:', error);
+    cart__remove_btn.classList.remove('loading');
+  });
+}
+
+  // Add event listeners to the minus and plus buttons
+  document.querySelectorAll('.qtySelector_product').forEach((qtySelector) => {
+    const minusBtn = qtySelector.querySelector(".minus");
+    const plusBtn = qtySelector.querySelector(".plus");
+    const qtyInput = qtySelector.querySelector(".item-qty");
+
+    const updateQuantity = (operation) => {
+      let value = parseInt(qtyInput.value, 10) || 1;
+
+      if (operation === "increment") {
+        qtyInput.value = value + 1;
+      } else if (operation === "decrement") {
+        qtyInput.value = value > 1 ? value - 1 : 1; // Prevent values less than 1
+      }
+
+      // Update input attributes
+      qtyInput.setAttribute("data-quantity", qtyInput.value);
+      qtyInput.setAttribute("value", qtyInput.value);
+    };
+
+    const validateInput = () => {
+      let value = parseInt(qtyInput.value) || 1;
+      qtyInput.value = value < 1 ? 1 : value;
+      qtyInput.setAttribute("data-quantity", qtyInput.value);
+      qtyInput.setAttribute("value", qtyInput.value);
+    };
+
+    // Event listeners for minus, plus, and input validation
+    minusBtn.addEventListener("click", () => updateQuantity("decrement"));
+    plusBtn.addEventListener("click", () => updateQuantity("increment"));
+    qtyInput.addEventListener("input", validateInput);
+  });
+
+
+function handleQuantity(qtySelector) {
+  const minusBtn = qtySelector.querySelector(".minus");
+  const plusBtn = qtySelector.querySelector(".plus");
+  const qtyInput = qtySelector.querySelector(".item-qty");
+
+  const updateQuantity = (operation) => {
+    let value = parseInt(qtyInput.value, 10) || 1;
+
+    if (operation === "increment") {
+      qtyInput.value = value + 1;
+     qtyInput.setAttribute("data-quantity", qtyInput.value );
+    qtyInput.setAttribute("value", qtyInput.value );
+    } else if (operation === "decrement") {
+      qtyInput.value = value > 1 ? value - 1 : 1; 
+      qtyInput.setAttribute("data-quantity", qtyInput.value );
+    qtyInput.setAttribute("value", qtyInput.value );
+    }
+
+   let line_property = qtyInput.getAttribute("data-key")
+   
+    postUpdate(line_property , qtyInput.value );  
+  };
+
+  
+  const validateInput = () => {
+    let value = parseInt(qtyInput.value) || 1;
+    qtyInput.value = value < 1 ? 1 : value;
+    qtyInput.setAttribute("data-quantity", qtyInput.value );
+    qtyInput.setAttribute("value", qtyInput.value );
+   let line_property = qtyInput.getAttribute("data-key")   
+    postUpdate(line_property , qtyInput.value );  
+  };
+
+  // Function to post updates to the cart
+const postUpdate = (line, quantity) => {
+  console.log(line, "line");
+  console.log(quantity, "quantity");
+
+  // Correctly creating the updates object
+  let updates = { [line]: Number(quantity) };
+  console.log(updates, "updates");
+
+  fetch(window.Shopify.routes.root + 'cart/update.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ updates })
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Cart updated:', data);
+      updateDrawerCustom();
+    })
+    .catch((error) => {
+      console.error('Error updating cart:', error);
+    });
+};
+
+   // Event listeners for buttons and input
+  minusBtn.addEventListener("click", () => updateQuantity("decrement"));
+  plusBtn.addEventListener("click", () => updateQuantity("increment"));
+  qtyInput.addEventListener("input", validateInput);
+}
+
+ document.querySelectorAll(".qtySelector").forEach((qtySelector) => {
+    handleQuantity(qtySelector);
+  });
+
+
+const accordionHeaders = document.querySelectorAll('.accordion-header');
+accordionHeaders.forEach(header => {
+  header.addEventListener('click', function () {
+    const item = this.parentElement;
+    const content = item.querySelector('.accordion-content');
+    item.classList.toggle('open');
+    if (item.classList.contains('open')) {
+      content.style.display = 'block';
+    } else {
+      content.style.display = 'none';
+    }
+  });
+});
+
+
+ 
+
+ 
+  
+
+ 

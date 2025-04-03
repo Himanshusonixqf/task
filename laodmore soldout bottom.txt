@@ -1,0 +1,112 @@
+     ul or li changes    
+
+		<ul
+              id="product-grid"
+              data-id="{{ section.id }}"
+              class="
+                grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
+                grid--{{ section.settings.columns_desktop }}-col-desktop
+                {% if section.settings.quick_add == 'bulk' %} collection-quick-add-bulk{% endif %}
+              "
+              data-next-page-url="{{ paginate.next.url }}"
+            >
+              {% assign skip_card_product_styles = false %}
+              {% assign available_products = collection.products | where: 'available', true %}
+              {% assign sold_out_products = collection.products | where: 'available', false %}
+              {% assign sorted_products = available_products | concat: sold_out_products %}
+
+              {%- for product in sorted_products -%}
+                {% assign lazy_load = false %}
+                {%- if forloop.index > 2 -%}
+                  {%- assign lazy_load = true -%}
+                {%- endif -%}
+                <li
+                  class="grid__item {% if product.available %} itg-available{% else %} itg-soldout{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                  {% if settings.animations_reveal_on_scroll %}
+                    data-cascade
+                    style="--animation-order: {{ forloop.index }};"
+                  {% endif %}
+                >
+                  {% render 'card-product',
+                    card_product: product,
+                    media_aspect_ratio: section.settings.image_ratio,
+                    image_shape: section.settings.image_shape,
+                    show_secondary_image: section.settings.show_secondary_image,
+                    show_vendor: section.settings.show_vendor,
+                    show_rating: section.settings.show_rating,
+                    lazy_load: lazy_load,
+                    skip_styles: skip_card_product_styles,
+                    quick_add: section.settings.quick_add,
+                    section_id: section.id
+                  %}
+                </li>
+                {%- assign skip_card_product_styles = true -%}
+              {%- endfor -%}
+            </ul>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="itg_load_more load-more">
+                <div class="load-more_spinner"></div>
+                <button class="load-more-btn button load-more_btn btn">Load More</button>
+              </div>
+            {%- endif -%}
+			
+			document.addEventListener("DOMContentLoaded", function () {
+    let productContainer = document.querySelector('.product-grid');
+    let nextPage = productContainer.getAttribute('data-next-page-url');
+    let loadMoreButton = document.querySelector('.load-more-btn');
+   var loadMoreBtn = document.querySelector('.load-more_btn');
+var loadMoreSpinner = document.querySelector('.load-more_spinner');
+    
+    loadMoreButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+       loadMoreSpinner.style.display = 'block';
+      
+        if (!nextPage) return; 
+
+        fetch(nextPage)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              
+            })
+            .then(data => {
+
+               loadMoreSpinner.style.display = 'none';
+                let tempContainer = document.createElement('div');
+                tempContainer.innerHTML = data;
+                let newProductContainer = tempContainer.querySelector('.product-grid');
+                let newNextPageUrl = newProductContainer.getAttribute('data-next-page-url');
+                
+                productContainer.innerHTML += newProductContainer.innerHTML;
+                
+                reorderProductList();
+
+                nextPage = newNextPageUrl;
+                if (!newNextPageUrl) {
+                    loadMoreButton.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading more products:', error);
+            });
+    });
+    function reorderProductList() {
+        let allItems = Array.from(productContainer.querySelectorAll('.grid__item'));
+        
+        let availableItems = allItems.filter(item => item.classList.contains('itg-available'));
+        let soldOutItems = allItems.filter(item => item.classList.contains('itg-soldout'));
+
+        productContainer.innerHTML = '';
+
+        availableItems.forEach(item => productContainer.appendChild(item));
+
+        soldOutItems.forEach(item => productContainer.appendChild(item));
+    }
+});
+
+
+ 
