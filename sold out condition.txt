@@ -1,0 +1,2 @@
+       {% assign search_results = collection.products %}
+{% assign available_products = search_results | where: 'available', true %}

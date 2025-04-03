@@ -1,0 +1,18 @@
+<div class="main_handle_pg">
+  {% assign page_handle = "mahatma-gandhi" %}
+ {% assign page = pages[page_handle] %}
+</div>
+   <h2>{{ page.title }}</h2>
+    <p>{{ page.content}}</p>
+
+{% schema %}
+  {
+    "name": "Handle Pages",
+    "settings": [
+      
+    ],
+    "presets": [
+      {"name":"Handle Pages"}
+    ]
+  }
+{% endschema %}

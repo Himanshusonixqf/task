@@ -1,0 +1,25 @@
+ <ul
+        class="gfgfgf  grid product-grid grid--{{ section.settings.columns_desktop }}-col-desktop grid--{{ section.settings.columns_mobile }}-col-tablet-down"
+        role="list"
+      >
+      
+       {% for tag in product.tags %}
+          {% if tag contains 'Related_' %}
+            {% assign related_product = tag | remove: 'Related_' %}
+            {% assign card_product = all_products[related_product] %}
+         {% if card_product %}
+          <li class="grid__item">
+            {% render 'card-product',
+              card_product: card_product,
+              media_aspect_ratio: section.settings.image_ratio,
+              image_shape: section.settings.image_shape,
+              show_secondary_image: section.settings.show_secondary_image,
+              show_vendor: section.settings.show_vendor,
+              show_rating: section.settings.show_rating
+            %}
+          </li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+           
+      </ul>

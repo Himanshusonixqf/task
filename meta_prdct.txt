@@ -1,0 +1,38 @@
+<style>
+  .clc_content {
+    display: flex;
+    gap: 30px;
+}
+</style>
+<div class="main_handle_clc page-width">
+  <div class="handle_collection_page">
+    {% assign collection = product.metafields.custom.cstmprvnprdct.value %}
+   
+    <div class="clc_title">
+     <h2>{{ collection.title }}</h2>
+    </div>
+    <div class="clc_content">
+    {% for product in collection.products %}
+      <div class="inner_clc_content">
+       {{ product | image_url: width: 300 | image_tag }}
+        <p>{{ product.title }}</p>
+        <p>{{ product.price | money }}</p>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Meta",
+  "settings": [
+
+  ],
+  "presets": [
+    {
+      "name":"Product Meta"
+    }
+  ]
+}
+{% endschema %}

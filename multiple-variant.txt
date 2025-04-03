@@ -1,0 +1,357 @@
+{% assign firstVariant = '' %}
+{% for option in product.options_with_values %}
+  {% if forloop.index == 1 %}
+    {% liquid
+      assign firstVariant = option
+    %}
+
+    {% assign colors = product.options_by_name[firstVariant.name].values | uniq %}
+
+    <div class="size_quantity_container">
+      {% for color in colors %}
+        <div class="size_color_main_wrapper" data-color="{{ color }}">
+          <div class="color-swatch-button">
+            <label
+              class="color-swatch"
+              for="{{ id | escape }}"
+              data-option-value
+              style="background-color:{{ color }}"
+            >
+            </label>
+
+            <span> {{ color }}</span>
+          </div>
+
+          <div class="size-and-quantity-main-wrapper">
+            {% assign sizes_for_color = '' %}
+            {% for variant in product.variants %}
+              {% if variant.option1 == color %}
+                {% capture sizes_for_color %}{{ sizes_for_color }}{{ variant.option2 }}:{{ variant.id }}:{{ variant.price | money_without_currency }}:{{ variant.inventory_quantity }}, {% endcapture %}
+              {% endif %}
+            {% endfor %}
+
+            {% assign unique_sizes = sizes_for_color | split: ', ' | uniq %}
+
+            {% for size_variant_pair in unique_sizes %}
+              {% if size_variant_pair != '' %}
+                {% assign size_variant = size_variant_pair | split: ':' %}
+                {% assign size = size_variant[0] %}
+                {% assign variant_id = size_variant[1] %}
+                {% assign price = size_variant[2] %}
+                {% assign quantity_available = size_variant[3] %}
+                <div class="size_price_main_wrapper">
+                  <div class="price_wrapper">
+                    <span>{{ price | money }}</span>
+                  </div>
+                  <div class="size-quantity-head-wrapper">
+                    <div class="size_wrapper">
+                      <label>{{ size }}</label>
+                    </div>
+
+                    <div class="quantity_wrapper">
+                      <input
+                        type="text"
+                        class="itg-purchase-qty"
+                        data-variant="{{ variant_id }}"
+                        data-price="{{ price }}"
+                        data-qty="{{ quantity_available }}"
+                        max="{{ quantity_available }}"
+                        oninput="checkQty(this)"
+                      >
+                    </div>
+                  </div>
+                  <div class="inventory_wrapper">
+                    <span>Qty: {{ quantity_available }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="total_summary_wrapper">
+      <div><span>Total Quantity: </span><span id="total-quantity">0</span></div>
+      <div><span>Total Price: </span><span id="total-price">$0.00</span></div>
+      <!-- <button id="add-to-cart-btn" type="button">Add to Cart</button> -->
+    </div>
+  {% endif %}
+{% endfor %}
+
+<script>
+
+
+    document.addEventListener('click', function(event) {
+        // Check if the clicked element is a label with the class "color-swatch"
+        if (event.target.tagName === 'LABEL' && event.target.classList.contains('color-swatch')) {
+            // Get the value of the "for" attribute (which should match the id of the input)
+            const labelForValue = event.target.getAttribute('for');
+
+            // Use the "for" value to find the associated input element
+            const inputElement = document.getElementById(labelForValue);
+
+            if (inputElement) {
+                // Get the value of the input element
+                const inputValue = inputElement.value;
+                console.log('Input Value:', inputValue);
+
+                // Loop through all color wrappers
+                document.querySelectorAll('.size_color_main_wrapper').forEach(function(wrapper) {
+                    // Remove the "order-1" class from all wrappers
+                    wrapper.classList.remove('order-1');
+
+                    // Check if the input value matches the wrapper's color data attribute
+                    if (inputValue === wrapper.getAttribute('data-color')) {
+                        // Add the "order-1" class to the matching wrapper
+                        wrapper.classList.add('order-1');
+                    }
+                });
+            } else {
+                console.log('No input element found for label with "for" value:', labelForValue);
+            }
+        }
+    });
+  
+
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    // Get all source elements
+    const sources = document.querySelectorAll('.product-form__input label.color-swatch');
+    const targets = document.querySelectorAll('.color-swatch-button label.color-swatch');
+
+    // Loop through each pair of source and target elements
+    sources.forEach((source, index) => {
+        const target = targets[index];
+        
+        // Get the computed styles from the source element
+        const computedStyles = window.getComputedStyle(source);
+
+        // Apply the background color to the target element
+        target.style.backgroundColor = computedStyles.backgroundColor;
+    });
+});
+  
+
+// Function to validate and update the quantity input field
+function checkQty(input) {
+    const maxQty = parseInt(input.getAttribute('data-qty'), 10);  // Maximum allowable quantity
+    let inputQty = parseInt(input.value, 10);  // Convert the input value to an integer
+
+    // Ensure input quantity does not exceed the maximum
+    if (inputQty > maxQty) {
+        input.value = maxQty;
+        inputQty = maxQty;
+    }
+
+    // Ensure the input is a valid number and is not negative
+    if (isNaN(inputQty) || inputQty < 0) {
+        input.value = '';
+        inputQty = 0;
+    }
+
+    // Toggle the 'itg-added-qty' class based on whether a positive quantity is entered
+    if (inputQty > 0) {
+        input.classList.add('itg-added-qty');
+    } else {
+        input.classList.remove('itg-added-qty');
+    }
+
+    // Update the total quantity and price display
+    updateTotals();
+}
+
+// Function to update the total quantity and price displayed on the page
+function updateTotals() {
+    const allInputs = document.querySelectorAll('input.itg-purchase-qty');  // Select all quantity input fields
+    let totalQty = 0;
+    let totalPrice = 0;
+
+    allInputs.forEach(input => {
+        const qty = parseInt(input.value) || 0;  // Get the quantity or default to 0
+        const price = parseFloat(input.getAttribute('data-price')) || 0;  // Get the price or default to 0
+
+        // Calculate the total quantity and total price
+        totalQty += qty;
+        totalPrice += qty * price;
+    });
+
+    // Update the display for total quantity and total price
+    const totalQuantityElement = document.getElementById('total-quantity');
+    const totalPriceElement = document.getElementById('total-price');
+    
+    if (totalQuantityElement) {
+        totalQuantityElement.textContent = totalQty;
+    }
+    
+    if (totalPriceElement) {
+        totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+    }
+}
+</script>
+
+      onSubmitHandler(evt) {
+        evt.preventDefault();
+        if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
+
+        this.handleErrorMessage();
+
+        this.submitButton.setAttribute('aria-disabled', true);
+        this.submitButton.classList.add('loading');
+        this.querySelector('.loading__spinner').classList.remove('hidden');
+
+        // Custom code to gather multiple items
+        const elements = document.querySelectorAll('input.itg-purchase-qty.itg-added-qty');
+        let itemsToAdd = [];
+
+        elements.forEach(element => {
+          const variantId = element.getAttribute('data-variant');
+          const qty = parseInt(element.value, 10);
+          if (qty > 0) {
+            itemsToAdd.push({
+              id: variantId,
+              quantity: qty
+            });
+          }
+        });
+                if (itemsToAdd.length === 0) {
+          alert('Please select at least one item to add to the cart.');
+          this.submitButton.classList.remove('loading');
+          this.querySelector('.loading__spinner').classList.add('hidden');
+          return;
+        }
+
+        if (itemsToAdd.length > 0) {
+          // Proceed with custom multi-item add to cart logic
+          const config = fetchConfig('javascript');
+          config.headers['X-Requested-With'] = 'XMLHttpRequest';
+          delete config.headers['Content-Type'];
+
+          const formData = new FormData();
+          itemsToAdd.forEach(item => {
+            formData.append('items[][id]', item.id);
+            formData.append('items[][quantity]', item.quantity);
+          });
+
+          if (this.cart) {
+            formData.append(
+              'sections',
+              this.cart.getSectionsToRender().map((section) => section.id)
+            );
+            formData.append('sections_url', window.location.pathname);
+            this.cart.setActiveElement(document.activeElement);
+          }
+          config.body = formData;
+
+          fetch(`${routes.cart_add_url}`, config)
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.status) {
+                publish(PUB_SUB_EVENTS.cartError, {
+                  source: 'product-form',
+                  productVariantId: formData.get('id'),
+                  errors: response.errors || response.description,
+                  message: response.message,
+                });
+                this.handleErrorMessage(response.description);
+
+                const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+                if (!soldOutMessage) return;
+                this.submitButton.setAttribute('aria-disabled', true);
+                this.submitButtonText.classList.add('hidden');
+                soldOutMessage.classList.remove('hidden');
+                this.error = true;
+                return;
+              } else if (!this.cart) {
+                window.location = window.routes.cart_url;
+                return;
+              }
+
+              if (!this.error)
+                publish(PUB_SUB_EVENTS.cartUpdate, {
+                  source: 'product-form',
+                  productVariantId: formData.get('id'),
+                  cartData: response,
+                });
+              this.error = false;
+              const quickAddModal = this.closest('quick-add-modal');
+              if (quickAddModal) {
+                document.body.addEventListener(
+                  'modalClosed',
+                  () => {
+                    setTimeout(() => {
+                      this.cart.renderContents(response);
+                    });
+                  },
+                  { once: true }
+                );
+                quickAddModal.hide(true);
+              } else {
+                this.cart.renderContents(response);
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+            })
+            .finally(() => {
+              this.submitButton.classList.remove('loading');
+              if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+              if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+              this.querySelector('.loading__spinner').classList.add('hidden');
+            });
+        } else {
+          // Proceed with default variant selection logic if no items are selected
+          const formData = new FormData(this.form);
+
+          if (this.cart) {
+            formData.append(
+              'sections',
+              this.cart.getSectionsToRender().map((section) => section.id)
+            );
+            formData.append('sections_url', window.location.pathname);
+            this.cart.setActiveElement(document.activeElement);
+          }
+          config.body = formData;
+
+          fetch(`${routes.cart_add_url}`, config)
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.status) {
+                this.handleErrorMessage(response.description);
+                return;
+              }
+
+              if (!this.error)
+                publish(PUB_SUB_EVENTS.cartUpdate, {
+                  source: 'product-form',
+                  productVariantId: formData.get('id'),
+                  cartData: response,
+                });
+              this.error = false;
+              const quickAddModal = this.closest('quick-add-modal');
+              if (quickAddModal) {
+                document.body.addEventListener(
+                  'modalClosed',
+                  () => {
+                    setTimeout(() => {
+                      this.cart.renderContents(response);
+                    });
+                  },
+                  { once: true }
+                );
+                quickAddModal.hide(true);
+              } else {
+                this.cart.renderContents(response);
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+            })
+            .finally(() => {
+              this.submitButton.classList.remove('loading');
+              if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+              if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+              this.querySelector('.loading__spinner').classList.add('hidden');
+            });
+        }
+      }

@@ -1,0 +1,270 @@
+<style>
+    .discount{
+      color:green;
+    }
+    p.price span {
+      background-color: #67b159;
+    }
+    p.out_price span{
+       background-color: red;
+    }
+   del.campare {
+      font-size: 11px;
+      opacity: 50%;
+      color: #743131;
+  }
+</style>
+<div class="featured_product_container">
+  <div class="page-width">
+    <div class="featured_inner_container">
+      {% assign product = section.settings.featured_product %}
+      <div class="left_container">
+        <img src="{{ product.featured_image.src | img_url: 'master' }} ">
+      </div>
+      <div class="right_container">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'vendor' %}
+              <p class="align_{{ block.settings.vendor}}" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+            {% when 'text' %}
+              <h2 {{ block.shopify_attributes }} class="h2content size_{{ block.settings.heading_size_clc}}">
+                {{ product.title }}
+              </h2>
+            {% when 'price' %}
+              {% if product.available %}
+                <p class="price" {{ block.shopify_attributes }}>
+                  {{ product.price | money }}
+                  {{ product.compare_at_price_max | money }}
+                  <span>In stock</span>
+                </p>
+              {% else %}
+                <p class="price out_price">
+                  {{ product.price | money }}
+                  <sub
+                    ><del class="campare"> {{ product.compare_at_price_max | money }} </del></sub
+                  >
+                  <span>Out of stock</span>
+                </p>
+              {% endif %}
+
+              <span class="discount">
+                {% if product.compare_at_price_max > product.price %}
+                  {{
+                    product.compare_at_price_max
+                    | minus: product.price
+                    | times: 100
+                    | divided_by: product.compare_at_price_max
+                  -}}
+                  % Discount
+                {% endif %}
+              </span>
+
+            {% when 'variant' %}
+              <select name="id" id="product-select" class="product-form__input product-form__input--select">
+                {% for variant in product.variants %}
+                  {% if variant.available %}
+                    <option value="{{ variant.id }}">{{ variant.title }}</option>
+                  {% else %}
+                    <option disabled="disabled">{{ variant.title }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            {% when 'quantity' %}
+              <div class="qtydiv">
+                <label for="Quantity" class="quantity-selector">Quantity</label>
+                <div class="qtybox">
+                  <span class="btnqty qtyminus icon icon-minus">-</span>
+                  <input
+                    type="text"
+                    id="quantity"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    class="quantity-selector quantity-input"
+                    readonly=""
+                  >
+                  <span class="btnqty qtyplus icon icon-plus">+</span>
+                </div>
+              </div>
+            {% when 'button' %}
+              <div id="add_to_cart_btn_container">
+                <form>
+                  <input name="id" value="{{ product.variants.first.id}}" type="hidden" id="add-to-cart-btn">
+                  <input name="add" value="Add To Cart" type="submit">
+                </form>
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": " Featured Product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Select Product"
+    }
+  ],
+  "blocks":[
+      {
+        "name": "text",
+        "type": "text",
+        "settings":[
+         {
+      "type": "select",
+      "id": "heading_size_clc",
+      "label": "Heading size",
+      "options": [
+        {
+      "value": "small",
+      "label": "Small"
+    },
+    {
+      "value": "medium",
+      "label": "Medium"
+    },
+    {
+      "value": "large",
+      "label": "Large"
+    }
+  ],
+  "default": "large"
+}
+        ]
+      },
+    {
+      "name":"Vendor",
+      "type":"vendor",
+          "settings":[
+         {
+      "type": "select",
+      "id": "vendor",
+      "label": "Alignments",
+      "options": [
+        {
+      "value": "left",
+      "label": "Left"
+    },
+    {
+      "value": "center",
+      "label": "Center"
+    },
+    {
+      "value": "right",
+      "label": "Right"
+    }
+  ],
+  "default": "left"
+}
+        ]
+    },
+    {
+      "name":"Price",
+      "type":"price"
+    },
+
+    {
+      "name":"Quantity",
+      "type":"quantity"
+    },
+    {
+      "name":"Variant",
+      "type":"variant"
+    },
+
+     {
+      "name":"Button",
+      "type":"button",
+       "settings":[
+         {
+      "type": "select",
+      "id": "bgColor",
+      "label": "Choose Bg Color",
+      "options": [
+        {
+      "value": "black",
+      "label": "Black"
+    },
+        {
+      "value": "skyblue",
+      "label": "Sky-Blue"
+    },
+    {
+      "value": "purple",
+      "label": "Purple"
+    }
+  ],
+  "default": "black"
+}
+        ]
+    }
+  ],
+  "presets" : [
+    {
+      "name" : "Featured Product"
+    }
+  ]
+}
+{% endschema %}
+
+//js
+
+$(document).ready(function () {
+  $(".qtybox .btnqty").on("click", function () {
+    var qty = parseInt($(this).parent(".qtybox").find(".quantity-input").val());
+    if ($(this).hasClass("qtyplus")) {
+      qty++;
+    } else {
+      if (qty > 1) {
+        qty--;
+      }
+    }
+  qty = isNaN(qty) ? 1 : qty;
+  $(this).parent(".qtybox").find(".quantity-input").val(qty);
+  });
+
+  $("#product-select").on("change", function () {
+    var selectedVariant = $(this).val();
+    if (selectedVariant !== "") {
+      $("#add-to-cart-btn").prop("disabled", false);
+    } else {
+      $("#add-to-cart-btn").prop("disabled", true);
+    }
+  });
+
+  function addToCart(variantId, quantity) {
+    var data = {
+      id: variantId,
+      quantity: quantity,
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/cart/add.js",
+      data: data,
+      dataType: "json",
+      success: function () {
+        alert("Product added to cart!");
+      },
+      error: function (XMLHttpRequest, textStatus) {
+        alert("Error: " + textStatus);
+      },
+    });
+  }
+
+  $("#add_to_cart_btn_container").click(function () {
+    var selectedVariantId = $("#product-select").val();
+    var selectedQuantity = $("#quantity").val();
+
+    if (selectedVariantId) {
+      addToCart(selectedVariantId, selectedQuantity);
+    } else {
+      alert("Please select a variant");
+    }
+  });
+ });
+

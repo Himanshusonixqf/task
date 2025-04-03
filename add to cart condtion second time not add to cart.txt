@@ -1,0 +1,119 @@
+            <select id="color-selector" >
+                <option value="">Select Color</option>
+                {% assign unique_colors = product.variants | map: 'option1' | uniq %}
+                {% for color in unique_colors %}
+                  <option value="{{ color }}">{{ color }}</option>
+                {% endfor %}
+              </select>
+
+              <select id="size-selector">
+                <option value="">Select Size</option>
+                {% assign unique_sizes = product.variants | map: 'option2' | uniq %}
+                {% for size in unique_sizes %}
+                  <option value="{{ size }}">{{ size }}</option>
+                {% endfor %}
+              </select>
+              <input type="text" id="prop" placeholder="What's-Your-Demond">
+              <div>
+               <ul class="cart-page">
+                  <li>Cotton</li> 
+                  <li>All Sizes</li> 
+                  <li>All Colors</li>
+                </ul> 
+              </div> 
+
+
+    // function isProductInCart(productId) {
+                //     var inCart = false;
+                 
+                //     $.ajax({
+                //         url: '/cart.js',
+                //         type: 'GET',
+                //         dataType: 'json',
+                //         async: false,
+                //         success: function(cart) {
+                //             $.each(cart.items, function(index, item) {
+                //                 if (item.id == productId) {
+                //                     inCart = true;
+                              
+                //                 }
+                //             });
+                //         }
+                //     });
+            
+                //     return inCart;
+                // }
+
+          function isProductInCart(productId) {
+             var inCart = false;
+          {% for item in cart.items %}
+              {% assign carts = item %}
+         
+            var compare;
+               var cart = '{{ carts.id }}';
+
+                compare = cart;
+      
+                                if (compare == productId) {
+                                    inCart = true;
+                                }
+                 {% endfor %}
+             return inCart;
+             
+          }
+          
+          
+                              $('#add_to_cart_btn_container').on('click', function(e) {
+                               e.preventDefault();
+                          
+                               var color = $('#color-selector').val();
+                               var size = $('#size-selector').val();
+                               var prop = $('#prop').val();
+                               var line = $('.cart-page').text();
+                             
+                               var variantId = getProductVariantId(color, size);
+                               var selectedQuantity = $(this).closest('.right_container').find('.quantity-input').val();
+                         
+
+                                 if (isProductInCart(variantId)) {
+                                      alert('This product is already in your cart.');
+                                      return;
+                    }
+                               var formData = {
+                                 'id': variantId,
+                                 'quantity': selectedQuantity,
+                                  'properties':{
+                                   "what's-your-demond":prop,
+                                   "details":line
+                                  }
+                               };
+
+                               $.ajax({
+                                 type: 'POST',
+                                 url: '/cart/add.js',
+                                 data: formData,
+                                 dataType: 'json',
+                                 success: function(response) {
+                                   alert('Product added to cart!');
+                                   window.location ="/cart";
+                                   $("select").empty();
+                               
+                                 },
+                                 error: function(xhr, status, error) {
+                                   console.error(xhr.responseText);
+                                   alert('Error adding product to cart. Please try again.');
+                                 }
+                               });
+                             });
+
+
+                             function getProductVariantId(color, size) {
+                               var variants = {{ product.variants | json }};
+                               for (var i = 0; i < variants.length; i++) {
+                                 if (variants[i].option1 == color && variants[i].option2 == size) {
+                                   return variants[i].id;
+                                 }
+                               }
+                               return null;
+                             }
+                            });

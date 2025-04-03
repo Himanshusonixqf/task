@@ -1,0 +1,162 @@
+                        {%- assign item = cart.items -%}
+                        {% if item.properties.lineItem %}
+                          <p class="clickhere_line choise">Do You Want Edit line Item <span> Click Here </span></p>
+
+                          <div class="line_item_div">
+                            <button class="edit-button" data-item-id="{{ item.id }}">Edit Line Item</button>
+                            <span class="item-title" id="line_{{ item.id }}">{{ item.properties.lineItem }}</span>
+                            <p class="crs_line cros">&#10060;</p>
+                            <br>
+                            <input
+                              type="text"
+                              class="line_input"
+                              id="line-item-{{ item.id }}"
+                              value="{{ item.properties.lineItem }}"
+                            >
+                            <button class="save-button" data-item-id="{{ item.id }}">Save</button>
+                          </div>
+                        {% endif %}
+
+                        <p class="clickhere choise">Do You Want Edit Variant <span> Click Here </span></p>
+
+                        {% if item.variant_id %}
+                          <div class="variant_item_div">
+                            <button class="edit-variant-button" data-item-id="{{ item.id }}">Edit Variant</button>
+                            <p class="crs cros">&#10060;</p>
+                            <span class="item-variant" id="variant_{{ item.id }}">{{ item.variant_title }}</span><br>
+                            <select class="variant_select" id="variant-select-{{ item.id }}">
+                              {%- for variant in item.product.variants -%}
+                                <option
+                                  value="{{ variant.id }}"
+                                  {% if variant.id == item.variant_id %}
+                                    selected
+                                  {% endif %}
+                                >
+                                  {{ variant.title }}
+                                </option>
+                              {%- endfor -%}
+                            </select>
+                            <button class="save-variant-button" data-item-id="{{ item.id }}">Save</button>
+                          </div>
+                        {% endif %}
+
+
+
+
+
+
+
+//js
+
+ <script>
+ $(document).ready(function(){
+
+  $('.clickhere').click(function(){
+    $(this).hide();
+    $(this).next('.variant_item_div').show();
+  })
+    $('.crs').click(function(){
+      $(this).parent('.variant_item_div').hide();
+       $(this).parent().siblings('.clickhere').show();
+    });
+      $('.clickhere_line').click(function(){
+         $(this).next('.line_item_div').show();
+      });
+          $('.crs_line').click(function(){
+          $(this).parent('.line_item_div').hide();
+       $(this).parent().siblings('.clickhere_line').show();
+      });
+   
+      // $(".edit-button").click(function(e){
+      //   e.preventDefault();
+      //   var prdctId = $(this).data('item-id');
+      //   $('.save-button[data-item-id="'+ prdctId +'"').show();
+      //   $('#line-item-' + prdctId ).show();
+      //   $('#line_' + prdctId ).hide();
+      //   $(this).hide();
+      // });
+
+      $(".save-button").click(function(e){
+        e.preventDefault();
+        var itemId = $(this).data('item-id');
+        var data = $('#line-item-' + itemId ).val();
+        updateCart(itemId, data);
+      });
+    
+      $(".edit-variant-button").click(function(e){
+        e.preventDefault();
+        var prdctId = $(this).data('item-id');
+        $('.save-variant-button[data-item-id="'+ prdctId +'"').show();
+        $('#variant-select-' + prdctId ).show();
+        $('#variant_' + prdctId ).hide();
+        $(this).hide();
+      });
+ 
+      $(".save-variant-button").click(function(e){
+        e.preventDefault();
+        var itemId = $(this).data('item-id');
+        var newVariantId = $('#variant-select-' + itemId ).val();
+        var lineItemData = $('#line-item-' + itemId ).val(); 
+        updateCartVariant(itemId, newVariantId, lineItemData);
+      });
+
+      function updateCart(itemId, newText) {
+        $.ajax({
+          url: '/cart/change.js',
+          type: 'POST',
+          dataType: 'json',
+          data: {
+            id: itemId,
+            properties: {
+              lineItem: newText
+            } 
+          },
+          success: function() {
+            window.location = "/cart";
+          },
+          error: function() {
+            alert('Error updating cart item');
+          }
+        });
+      }
+   
+  function updateCartVariant(itemId, newVariantId, lineItemData) {
+        $.ajax({
+          url: '/cart/change.js',
+          type: 'POST',
+          dataType: 'json',
+          data: {
+            id: itemId,
+            quantity: 0
+          },
+          success: function() {
+            addNewVariantToCart(newVariantId, lineItemData);
+          },
+          error: function() {
+            alert('Error updating cart item');
+          }
+        });
+      } 
+
+      function addNewVariantToCart(variantId, lineItemData) {
+        $.ajax({
+          url: '/cart/add.js',
+          type: 'POST',
+          dataType: 'json',
+          data: {
+            id: variantId,
+            quantity: 1,
+            properties: {
+              lineItem: lineItemData
+            }
+          },
+          success: function() {
+            window.location = "/cart";
+          },
+          error: function() {
+            alert('Error adding new variant to cart');
+          }
+        });
+      }
+    });
+</script> 

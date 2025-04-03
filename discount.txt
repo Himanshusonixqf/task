@@ -1,0 +1,102 @@
+<div class="rw_section3">
+  <div class="page-width">
+    <div class="heading_div_sec_3">
+      {% if section.settings.heading_main != blank %}
+        <h2>{{ section.settings.heading_main }}</h2>
+      {% endif %}
+      <ul id="tabs-nav">
+        {% for block in section.blocks %}
+          <li>
+            <span id="tab_{% increment a %}">{{ block.settings.collection.title }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="collection_product_main_div">
+      {% for block in section.blocks %}
+        {% assign collection = block.settings.collection %}
+
+        <div class="full_collection" id="tab_{% increment i %}">
+          {% for product in collection.products limit: 4 %}
+            <a href="{{ product.url }}" target="_blank" class="product_custom_b">
+              <div class="product_div">
+                <div class="product_img_div">
+                  <img src="{{ product.featured_image   | img_url:'500x'  }}   ">
+                </div>
+                <p>{{ product.title }}</p>
+                <span class="Discount">
+                  {% if product.compare_at_price_max > product.price %}
+                    {{
+                      product.compare_at_price_max
+                      | minus: product.price
+                      | times: 100
+                      | divided_by: product.compare_at_price_max
+                    -}}
+                    % Discount
+                  {% endif %}
+                </span>
+                <p class="collection_products_price">{{ product.price | money }}</p>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="btn_new">
+      <a href="{{ collection.url }}">{{ section.settings.button_text }}</a>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "rw_section3",
+  "settings": [
+      {
+        "type": "text",
+        "id": "heading_main",
+        "label": "Heading",
+        "default": "Featured Collections"
+      },{
+  "type": "url",
+  "id": "button_link",
+  "label": "Button link"
+},{
+        "type": "text",
+        "id": "button_text",
+        "label": "button text"
+      }
+
+  ],
+  "blocks": [
+    {
+      "name" : "Collection",
+      "type" : "collection",
+      "settings": [
+        {
+          "type" : "collection",
+          "id" : "collection",
+          "label": "Select Collection"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name" : "rw_section3",
+      "blocks": [
+        {
+          "type" :  "collection"
+        },
+        {
+          "type" :  "collection"
+        },
+        {
+          "type" :  "collection"
+        }
+      ]
+    }
+
+  ]
+}
+{% endschema %}

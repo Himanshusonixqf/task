@@ -1,0 +1,25 @@
+<div class="main_meta_clc page-width">
+  <div class="meta_collection_page">
+    {% if collection.metafields.custom.prvncstmclc2 != blank %}
+    {% assign collection_meta = collection.metafields.custom.prvncstmclc2.value %}
+        {{ collection_meta | image_url: width: 200 | image_tag }}
+        <p>{{ collection_meta.title }}</p>
+        <p>{{ collection_meta.price | money }}</p>
+   
+   {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Meta Collection",
+  "settings": [
+
+  ],
+  "presets": [
+    {
+      "name":"Meta Collection"
+    }
+  ]
+}
+{% endschema %}

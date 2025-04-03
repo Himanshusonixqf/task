@@ -1,0 +1,45 @@
+                        <summary id="Summary-{{ block.id }}-{{ section.id }}" class="accordion_summary">
+                          <h3 class="accordion__title inline-richtext h4">
+                            {{ block.settings.heading | default: block.settings.page.title | escape }}
+                          </h3>
+                          <!--
+                            <span class="plus_btn">{% render 'icon-accordion', icon: block.settings.icon %}</span>
+                          -->
+                          <!-- {% render 'icon-caret' %} -->
+
+                          <div class="accordian_icons">
+                            <span class="plus_btn">
+                              <svg
+                                class="plus_icon"
+                                width="24"
+                                height="25"
+                                viewBox="0 0 24 25"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path d="M12 5.83008V19.8301" stroke="#F8F8F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M5 12.8301H19" stroke="#F8F8F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                              <svg
+                                class="minus_icon"
+                                width="24"
+                                height="25"
+                                viewBox="0 0 24 25"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                style="display: none;"
+                              >
+                                <path d="M5 12.8301H19" stroke="#F8F8F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                            </span>
+                          </div>
+                        </summary>
+// js
+    $('.accordion_summary').on('click', function() {
+      var $details = $(this).closest('details');
+      var $content = $details.find('.accordion__content');
+      if ($content.children().length > 0 ) {
+        $(this).find('.plus_icon, .minus_icon').toggle();
+      }
+    });
+ 

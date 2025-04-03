@@ -1,0 +1,22 @@
+ <div class="cstm_meta_render">
+  {% for meta in shop.metaobjects.cstm_metaobject.values %}
+    <h2>{{ meta.heading }}</h2>
+    <p>{{ meta.description }}</p>
+    <img src="{{ meta.image | img_url:"300x" }}" width="" height="">
+   
+      {% assign product = all_products[meta.product] %}
+    <div>
+      <img src="{{ product.featured_image | img_url:"300x" }}" alt="{{ product.title }}">
+      <h3>{{ product.title }}</h3>
+       <p>{{ product.price | money }}</p>
+    </div>
+    
+     {% assign collection = collections[meta.collection] %}
+   <h1> {{ collection.title }} </h1>
+    {% for product in collection.products %}
+      <img src="{{ product.featured_image | img_url:"300x" }}" alt="{{ product.title }}">
+       <h2>{{ product.price }}</h2>
+    <p>{{ product.price | money }}</p>
+      {% endfor%}
+  {% endfor %}
+</div> 

@@ -1,0 +1,245 @@
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var marquee = document.querySelector('.scrolling_content_main');
+
+    marquee.addEventListener('mouseover', function () {
+      marquee.style.animationPlayState = 'paused';
+    });
+
+    marquee.addEventListener('mouseout', function () {
+      marquee.style.animationPlayState = 'running';
+    });
+  });
+</script>
+
+{% style %}
+.bg-color-{{ section.id }}{
+  background-color: {{ section.settings.bg-color }};
+}
+ .scrolling-text--{{ section.id }} {
+   --move-speed: {{ section.settings.speed }}s;
+ }
+  .marquee-image {
+    gap : {{ section.settings.marquee_space }}px;
+}
+  .itg_marquee .scrolling-text__inner .scrolling_content_main{
+    gap : {{ section.settings.marquee_space }}px;
+  }
+ @media screen and (max-width: 768px){
+   .bg-color-{{ section.id }} {
+     padding-top: {{ section.settings.mob-padding-top }}px;
+     padding-bottom: {{ section.settings.mob-padding-bottom }}px;
+   }
+    .marquee-image, .itg_marquee .scrolling-text__inner .scrolling_content_main {
+      gap : {{ section.settings.mob_marquee_space }}px;
+   }
+ }
+ @media screen and (min-width: 768px){
+   .bg-color-{{ section.id }} {
+     padding-top: {{ section.settings.padding-top }}px;
+     padding-bottom: {{ section.settings.padding-bottom }}px;
+   }
+ }
+ .scrolling-slide .scrolling-text__inner {
+   display:flex;
+   align-items: center;
+   padding: 0px;
+ }
+@keyframes marques{
+      0% {
+        left: 0;
+    }
+    100% {
+        left: -100%;
+    }
+  }
+  .marquee-image {
+    display: flex;
+    align-items: center;
+}
+ .scrolling-slide {
+    overflow: hidden;
+}
+   .itg_marquee .scrolling-text__inner {
+    animation: initial!important;
+    position: relative;
+    width: 1000%;
+    height: 94px;
+    display:block;
+}
+.itg_marquee .scrolling-text__inner .scrolling_content_main{
+    display: flex;
+    align-items: center;
+    padding: 0px;
+    position: absolute;
+    top: 0;
+    width: 1000%;
+    padding: 20px 0;
+    animation: 76s linear 0s infinite normal none running marques, 76s linear 0s infinite normal none running marques;
+    height: 100%;
+}
+.itg_marquee .marquee-item {
+  display: flex;
+  align-items: center;
+  gap:40px;
+}
+.itg_marquee .marquee-media {
+  width: 30px;
+  height: 30px;
+}
+.itg_marquee .marquee-media img {
+  width: 100%;
+  vertical-align: middle;
+}
+ @media screen and (max-width: 768px){
+   .itg_marquee .scroll-text {
+     line-height: normal;
+}
+   .itg_marquee .marquee-item {
+     gap: 10px;
+}
+   .itg_marquee .scrolling-text__inner {
+     height:50px;
+}
+   .itg_marquee .marquee-media {
+     width: 15px;
+}
+}
+
+{% endstyle %}
+<div
+  class="color-{{ section.settings.color_scheme }} itg_marquee scrolling-text scrolling-text--{{ section.id }} bg-color-{{ section.id }}"
+>
+  <div
+    class="scrolling-text__inner"
+    aria-hidden="true"
+    tabindex="0"
+  >
+    <div class="scrolling_content_main">
+      {% for i in (1..35) %}
+        <div class="marquee-image">
+          {% for block in section.blocks %}
+            {% if block.settings.image != blank %}
+              <div class="marquee-item">
+                <span class="scroll-text h2">{{ block.settings.text }}</span>
+                <div class="marquee-media">
+                  <img
+                    src="{{ block.settings.image | img_url:'master'}}"
+                    alt="{{ block.settings.image.alt }}"
+                    width=""
+                    height=""
+                  >
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Scrolling Slide",
+  "class": "scrolling-slide",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "marquee_space",
+      "label": "Space Between Items (px)",
+      "default": 40,
+      "min": 10,
+      "max": 100,
+      "step": 2.5
+    },
+    {
+      "type": "range",
+      "id": "mob_marquee_space",
+      "label": "Space Between Mobile Items (px)",
+      "default": 40,
+      "min": 10,
+      "max": 100,
+      "step": 2.5
+    },
+    {
+      "type": "header",
+      "content": "Manage Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-top",
+      "default": 20,
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "label": "Padding Top"
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "default": 20,
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "label": "Padding Bottom"
+    },
+    {
+      "type": "header",
+      "content": "Manage Padding Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mob-padding-top",
+      "default": 20,
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "label": "Padding Top"
+    },
+    {
+      "type": "range",
+      "id": "mob-padding-bottom",
+      "default": 20,
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "label": "Padding Bottom"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide_item",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling Slide",
+      "blocks": [
+        {
+          "type": "slide_item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

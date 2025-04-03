@@ -1,0 +1,10 @@
+ kabhi country selector me selected country ki image dikhani ho too
+
+<img 
+          src="//cdn.shopify.com/static/images/flags/{{ localization.country.iso_code | downcase }}.svg?format=jpg&width=60 " 
+          alt="{{ localization.country.name }}" 
+          class="flag-icon" 
+          width="22" 
+          height="22" 
+          onerror="this.style.display='none'" 
+        />

@@ -1,0 +1,101 @@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  if (document.cookie.indexOf("tdworld=Hello") === -1) {
+    $(".popup_content").show();
+  } else {
+    $(".popup_content").hide();
+  }
+
+  $(".cross").click(function () {
+    document.cookie = "tdworld=Hello; max-age=" + 24 * 60 * 60;
+    $(".popup_content").hide();
+  });
+
+
+<div class="popup_main_div">
+  <div class="popup_content ">
+    <span class="cross"> &#10006; </span>
+    <h2>{{ section.settings.heading }}</h2>
+    <h3>{{ section.settings.sub_heading }}</h3>
+    <a href="{{ section.settings.button_link }}">{{ section.settings.button_text }}</a>
+  
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "newsletter_popup",
+    "settings": [
+     {
+  "type": "text",
+  "id": "heading",
+  "label": "Heading",
+  "default": "Quick links"
+},{
+  "type": "text",
+  "id": "sub_heading",
+  "label": "Sub Heading",
+  "default": "Quick links"
+},{
+  "type": "url",
+  "id": "button_link",
+  "label": "Button link"
+},{
+  "type": "text",
+  "id": "button_text",
+  "label": "Button text"
+ 
+} 
+    ],"presets": [
+      {
+        "name":"newsletter popup"
+      }
+    ]
+  }
+{% endschema %}
+
+<style>
+
+.popup_content {
+    padding: 15px;
+    background: white;
+    width: 32%;
+    margin: auto;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+   display:none; 
+}
+  body#cstm_id {
+    position: relative;
+}
+  .popup_content h2 {
+    font-weight: 700;
+}
+  .popup_content h3 {
+    font-weight: 600;
+}
+  .popup_content a {
+    text-decoration: none;
+    color: white;
+    background: #002554;
+    display: inline-block;
+    width: 100%;
+    padding: 7px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    margin: 10px 0;
+}
+  span.cross {
+    position: absolute;
+    top: 27px;
+    font-size: 20px;
+    right: 24px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+</style>

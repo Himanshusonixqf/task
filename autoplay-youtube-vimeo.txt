@@ -1,0 +1,106 @@
+<div class="main_block_div">
+  <div class="page-width">
+
+    <div class="block_division">
+            <div class="video_url_section clc">
+              {%- liquid
+                assign loop = ''
+                if section.settings.enable_video_looping_block
+                  assign loop = '&loop=1&playlist=' | append: section.settings.block_content_video.id
+                endif
+              -%}
+              {%- if section.settings.block_content_video.type == 'youtube' -%}
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/{{ section.settings.block_content_video.id }}?autoplay=1&mute=1{{ loop }}"
+                  class="js-youtube"
+                  allow="autoplay"
+                  allowfullscreen
+                ></iframe>
+              {%- else -%}
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://player.vimeo.com/video/{{section.settings.block_content_video.id  }}?autoplay=1&mute=1{{ loop }}"
+                  frameborder="0"
+                  class="js-vimeo"
+                  allow="autoplay; encrypted-media"
+                  allowfullscreen
+                ></iframe>
+              {%- endif -%}
+            </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Autoplay Video",
+    "settings": [
+            {
+          "type": "video_url",
+          "id": "block_content_video",
+          "label": "Youtube Video_Url",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ]
+         },
+             {
+      "type": "checkbox",
+      "id": "enable_video_looping_block",
+      "label": "enable_video_looping",
+      "default": false
+    }
+          ],
+
+      "presets":[
+      {
+        "name":"Autoplay Video"
+}
+    ]
+  }
+{% endschema %}
+
+or >>
+
+ {% if video_url != blank %}
+                <div class="relative overflow-hidden h-screen-header cstm-class">
+                  {%- if block.settings.video_url.type == 'youtube' -%}
+                    <iframe
+                      src="https://www.youtube.com/embed/{{ video_url.id }}?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=0&fs=0&disablekb=0"
+                      class="js-youtube absolute top-0 left-0 right-0 bottom-0 w-full h-full"
+                      allow="autoplay; encrypted-media"
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      allowfullscreen
+                      width="100%"
+                      height="100%"
+                    ></iframe>
+                  {%- else -%}
+                    <iframe
+                      src="https://player.vimeo.com/video/{{ video_url.id }}?autoplay=1&mute=1&controls=0"
+                      class="js-vimeo  absolute top-0 left-0 right-0 bottom-0 w-full h-full"
+                      allow="autoplay; encrypted-media"
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      allowfullscreen
+                    ></iframe>
+                  {%- endif -%}
+                </div>
+              {% else %}
+                <div class="relative overflow-hidden h-screen-header cstm-class">
+                  <div class="relative h-full w-full">
+                    <div class="absolute left-0 top-0 bottom-0 right-0 object-cover">
+                      <video width="100%" height="" autoplay muted loop playsinline>
+                        <source src="{{ video_file  | video_tag }}" type="video/mp4">
+                      </video>
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}

@@ -1,0 +1,120 @@
+<div class="test_custom_collections_outer">
+  <div class="page-width">
+    <div class="test_custom_collections_inner">
+      <div class="top_header_content">
+        <h2 class="title inline-richtext h1">{{ section.settings.footer_linklist_title }}</h2>
+      </div>
+      <div class="bottom_header_content">
+        {% for block in section.blocks %}
+          <h4>
+            <a href="#collection_{% increment a %}"> {{ block.settings.collection.title }} </a>
+          </h4>
+        {% endfor %}
+      </div>
+
+      <div class="all_collections">
+        {% for block in section.blocks %}
+          {% assign collection = block.settings.collection %}
+
+          <div class="full_collection" id="collection_{% increment i %}">
+            {% for product in collection.products %}
+              <div class="single_product_content">
+                <!-- <a href="{{ product.url }}"></a> -->
+
+                <div class="collection_product_img">
+                  <img src="{{ product.featured_image | img_url:'500x' }}">
+
+                  <!--
+                    <div class="add_to_cart_btn">
+                      <form method="post" action="/cart/add">
+                        <input name="id" value="{{ product.variants.first.id}}" type="hidden">
+                        <input name="add" value="Add To Cart" type="submit">
+                      </form>
+                    </div>
+                  -->
+                </div>
+
+                <div class="collec_single_product_details">
+                  <h4 class="full-unstyled-link">{{ product.title }}</h4>
+                  <p class="prod_price">{{ product.price | money }}</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- {% render 'arrows_svg.liquid' %} -->
+    </div>
+  </div>
+  <div class="featured_collection_btn">
+    <a class="button button--secondary" href="{{ section.settings.button_link }}">
+      {{ section.settings.button_label }}
+
+      <div class="btn_svg">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 11.2485L6 6.24854L1 1.24854" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Collections Prvn",
+  "settings": [
+      {
+        "type": "text",
+        "id": "footer_linklist_title",
+        "label": "Heading",
+        "default": "Featured Collections"
+      },
+     {
+  "type": "text",
+  "id": "button_label",
+  "label": "Button",
+  "default": "Button"
+},
+    {
+  "type": "url",
+  "id": "button_link",
+  "label": "Button link"
+}
+  ],
+  "blocks": [
+    {
+      "name" : "Collection",
+      "type" : "collection",
+      "settings": [
+        {
+          "type" : "collection",
+          "id" : "collection",
+          "label": "Select Collection"
+        }
+
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name" : "Featured Collections Prvn",
+      "blocks": [
+        {
+          "type" :  "collection"
+        },
+        {
+          "type" :  "collection"
+        },
+        {
+          "type" :  "collection"
+        }
+      ]
+    }
+
+  ]
+}
+{% endschema %}
+
+

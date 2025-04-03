@@ -1,0 +1,309 @@
+<style>
+     .add_container {
+        display: flex;
+        justify-content: space-evenly;
+        padding-bottom: 50px;
+    }
+      div#add_to_cart_btn_containers {
+      width: 9%;
+      margin: 25px auto;
+  }
+    input.quantity-selector {
+      padding: 13px;
+      width: 125px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 15px;
+      cursor: pointer;
+  }
+</style>
+
+<div class="featured_product_container">
+  <div class="page-width">
+    <div class="add_container">
+      {% assign collection = section.settings.collection %}
+      {% for product in collection.products %}
+        <div
+          class="collection-cart"
+          data-product-id="{{ product.id }}"
+          data-inventory="{% if product.variants.first.inventory_management == 'shopify' and     product.variants.first.inventory_quantity > 0 %}{{ product.variants.first.inventory_quantity }}{% else %}0{% endif %}"
+          data-product-json="{{ product | json | escape }}"
+        >
+          <img src="{{ product.featured_image | img_url: "500x" }}" width="" height="">
+          <h5>{{ product.title }}</h5>
+          <p>{{ product.price | money }}</p>
+
+          <label for="prop">Additional Information</label>
+          <input type="text" id="prop" placeholder="What's-Your-Demond" style="padding:10px;">
+
+          <div class="qtydiv">
+            <label for="Quantity" class="quantity-selector">Quantity</label>
+            <div class="qtybox">
+              <span class="btnqty qtyminus icon icon-minus">-</span>
+              <input
+                type="text"
+                id="quantity-{{ product.id }}"
+                name="quantity"
+                value="1"
+                min="1"
+                class="quantity-selector quantity-input"
+                readonly=""
+              >
+              <span class="btnqty qtyplus icon icon-plus">+</span>
+            </div>
+          </div>
+          <div class="variants-cart">
+            <label for="Variant" class="Variant-selector">Select Variants</label>
+            <select id="color-selectors-{{ product.id }}" class="variant-selectors color-selector" name="cards">
+              <option value="selectcard">Select Color</option>
+              {% assign unique_colors = product.variants | map: 'option1' | uniq %}
+              {% for color in unique_colors %}
+                <option value="{{ color }}">{{ color }}</option>
+              {% endfor %}
+            </select>
+
+            <select id="size-selectors-{{ product.id }}" class="variant-selectors size-selector" name="cards">
+              <option value="selectcard">Select Size</option>
+              {% assign unique_sizes = product.variants | map: 'option2' | uniq %}
+              {% for size in unique_sizes %}
+                <option value="{{ size }}">{{ size }}</option>
+              {% endfor %}
+            </select>
+
+            <select id="material-selectors-{{ product.id }}" class="variant-selectors material-selector" name="cards">
+              <option value="selectcard">Select Material</option>
+              {% assign unique_material = product.variants | map: 'option3' | uniq %}
+              {% for material in unique_material %}
+                <option value="{{ material }}">{{ material }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id="verified">
+            <h4 style="font-size:18px;color:green">
+              <i class="fa fa-check-circle" style="font-size:25px;"></i> This product ready for add to cart
+            </h4>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div id="add_to_cart_btn_containers">
+      <button id="add-to-cart-btn">Add To Cart</button>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+   var additionalProductId = "46243179790578";
+                    function productInCart(productId) {
+                          var inCart = false;
+                          {% for item in cart.items %}
+                              {% assign carts = item %} 
+                        
+                            var compare;
+                               var cart = '{{ carts.id }}';
+
+                                compare = cart;
+
+                                                if (compare == productId) {
+                                                    inCart = true;
+                                                }
+                                 {% endfor %}
+                             return inCart;
+                          }
+
+  document.getElementById('add-to-cart-btn').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    var productsToAdd = [];
+
+    function isProductInCart(productId) {
+      var inCart = false;
+      {% for item in cart.items %}
+        {% assign carts = item %}
+        var compare;
+        var cart = '{{ carts.id }}';
+        compare = cart;
+        if (compare == productId) {
+          inCart = true;
+        }
+      {% endfor %}
+      return inCart;
+    }
+
+    document.querySelectorAll('.collection-cart').forEach(function(cart) {
+      
+      var productId = cart.getAttribute('data-product-id');
+      var productData = JSON.parse(cart.getAttribute('data-product-json'));
+
+      var quantityInput = document.getElementById('quantity-' + productId);
+      var colorSelector = document.getElementById('color-selectors-' + productId);
+      var sizeSelector = document.getElementById('size-selectors-' + productId);
+      var materialSelector = document.getElementById('material-selectors-' + productId);
+       
+      
+      var selectedColor = colorSelector.value;
+      var selectedSize = sizeSelector.value;
+      var selectedMaterial = materialSelector.value;
+       var prop = $('#prop').val();
+
+      if (selectedColor && selectedSize && selectedMaterial) {
+        var variantId;
+        productData.variants.forEach(function(variant) {
+          if (variant.option1 === selectedColor && variant.option2 === selectedSize && variant.option3 === selectedMaterial) {
+            variantId = variant.id;
+          }
+        });
+
+        if (isProductInCart(variantId)) {
+          alert('This product is already in your cart.');
+          return;
+        }
+
+        if (variantId) {
+          productsToAdd.push({
+            id: variantId,
+            quantity: parseInt(quantityInput.value),
+             'properties':{
+             "what's-your-demond":prop
+         }
+          });
+        } else {
+          console.log(`you added ${productData.title} product added cart`);
+          return;
+        }
+      }
+    });
+
+    if (productsToAdd.length > 0) {
+      addToCart(productsToAdd);
+    } else {
+      alert('Please select variants for the product you want to add to the cart.');
+    }
+  });
+
+  function addToCart(products) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        items: products
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+     addAdditionalProductToCart(additionalProductId, 1);
+      console.log('Success:', data);
+       alert('Products added to cart!');
+        window.location= "/cart";
+      $("select").empty();
+
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('There was an error adding the products to the cart.');
+    });
+  }
+
+  document.querySelectorAll('.collection-cart').forEach(function(cart) {
+    var productId = cart.getAttribute('data-product-id');
+    var quantityInput = document.getElementById('quantity-' + productId);
+    var inventory = parseInt(cart.getAttribute('data-inventory'));
+
+    var colorSelector = document.getElementById('color-selectors-' + productId);
+    var sizeSelector = document.getElementById('size-selectors-' + productId);
+    var materialSelector = document.getElementById('material-selectors-' + productId);
+
+    function updateButtons() {
+      var quantity = parseInt(quantityInput.value);
+      cart.querySelector('.qtyminus').disabled = quantity <= 1;
+      cart.querySelector('.qtyplus').disabled = quantity >= inventory;
+
+      if (quantity == inventory) {
+        setTimeout(() => {
+          alert("Product has no more quantity");
+        }, "900");
+      }
+    }
+
+    function checkVariantSelection() {
+      var selectedColor = colorSelector.value;
+      var selectedSize = sizeSelector.value;
+      var selecteMaterial = materialSelector.value;
+      
+      var verifiedDiv = cart.querySelector('#verified');
+
+      if (selectedColor && selectedSize && selecteMaterial && selectedColor !== 'selectcard' && selectedSize !== 'selectcard' && selecteMaterial !== 'selectcard') {
+        verifiedDiv.style.display = 'block';
+      } else {
+        verifiedDiv.style.display = 'none';
+      }
+    }
+
+    cart.querySelector('.qtyminus').addEventListener('click', function() {
+      if (parseInt(quantityInput.value) > 1) {
+        quantityInput.value = parseInt(quantityInput.value) - 1;
+        updateButtons();
+      }
+    });
+
+    cart.querySelector('.qtyplus').addEventListener('click', function() {
+      if (parseInt(quantityInput.value) < inventory) {
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+        updateButtons();
+      }
+    });
+
+    colorSelector.addEventListener('change', checkVariantSelection);
+    sizeSelector.addEventListener('change', checkVariantSelection);
+    materialSelector.addEventListener('change', checkVariantSelection);
+
+    updateButtons();
+    checkVariantSelection();
+  });
+   
+
+                    function addAdditionalProductToCart(productId, quantity) {
+
+                         if (productInCart(additionalProductId)) {
+                               alert('Additional product is already in your cart.');
+                                return;
+                           }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/cart/add.js',
+                            data: {
+                              id: productId,
+                              quantity: quantity
+                             },
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log('Additional product added:', response);
+                                window.location.href = "/cart";
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error adding additional product:', xhr.responseText);
+                                alert('Error adding additional product to cart. Please try again.');
+                            }
+                        });
+                    }
+});
+</script>
+{% schema %}
+{
+  "name": "Collection-Cart",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection-Cart"
+    }
+  ]
+}
+{% endschema %}

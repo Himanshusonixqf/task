@@ -1,0 +1,245 @@
+$(document).ready(function() {
+
+      $('button[data-id]').click(function() {
+        var productId = $(this).data('id');
+      
+        $('.hotspot_product').hide();
+
+        $('.hotspot_product[data-product="' + productId + '"]').show();
+    });
+});
+
+<div class="cusotm-hotspot-banner">
+  <div class="cusotm-hotspot-banner-image">
+    {% if section.settings.custom_hotspot_banner_image != blank %}
+        <img src="{{ section.settings.custom_hotspot_banner_image | img_url: 'master' }}">
+    {% endif %}
+  </div>
+  
+  <div class="hotspot-banner-image_svg_wrapper">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.custom_hotspot_product %}    
+        <div class="cusotm-hotspot-banner-image_svg">
+            <button data-id="{{ product.id }}">
+              {% render 'boxer_pop_svg' %}
+            </button>
+        </div>
+      {% endfor %}
+  </div>
+
+ <div class="hotspot_product-wrapper"> 
+    {% for block in section.blocks %}
+      {% assign product = block.settings.custom_hotspot_product %}    
+
+      <div class="hotspot_product" data-product="{{ product.id }}">
+        <a href={{ product.url }}></a>
+          {% if product.featured_image != blank %}
+              <img src={{ product.featured_image | img_url: 'master' }}>
+          {% endif %}
+
+          <h4>{{ product.title }}</h4>
+    
+            <p> {{ product.price | money }}</p>
+           
+        
+      </div>
+      
+    {% endfor %}
+ </div>
+   
+</div>
+
+{% javascript %}
+
+$(document).ready(function() {
+
+      $('button[data-id]').click(function() {
+        var productId = $(this).data('id');
+      
+        $('.hotspot_product').hide();
+
+        $('.hotspot_product[data-product="' + productId + '"]').show();
+    });
+});
+
+  
+{% endjavascript %}
+
+
+{% stylesheet %}
+  
+.cusotm-hotspot-banner {
+    width: 100%;
+    position: relative;
+}
+
+.cusotm-hotspot-banner-image img {
+    width: 100%;
+    display:flex;
+}
+
+.hotspot_product-wrapper {
+    position: absolute;
+    top: 11%;
+    padding: 20px 20px;
+    right: 4%;
+     border-radius: 6px;
+    background: #fff;
+}
+
+.hotspot_product h4 {
+    margin: 0px;
+    font-weight: 400;
+    padding-top: 9px;
+    font-size: 16px;
+    font-family: serif;
+    line-height: 24px;
+    color: #262626;
+}
+  
+.hotspot_product p {
+    margin: 0px;
+    padding-top: 4px;
+    font-weight: 600;
+    line-height: 26.01px;
+    font-size: 16px;
+}
+
+.hotspot-banner-image_svg_wrapper {
+    display: flex;
+    gap: 15px;
+    position: absolute;
+    top: 37%;
+    left: 24%;
+    cursor:pointer;
+}
+
+.cusotm-hotspot-banner-image_svg  button {
+    border: navajowhite;
+    border-radius: 50%;
+    height: 55px;
+}
+  
+{% endstylesheet %}
+
+{% schema %}
+  {
+    "name": "custom_hotspot_banner",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "custom_hotspot_banner_image",
+        "label": "Image"
+     }        
+  ],
+
+    "blocks":[
+      {
+        "name": "Product",
+        "type": "product",
+        "settings":[
+          {
+            "type": "product",
+            "id": "custom_hotspot_product",
+            "label": "Product"
+          }
+        ]
+      }  
+    ],
+    
+    "presets":[
+      {
+        "name": "custom_hotspot_banner_section"
+      }
+    ]
+  }
+{% endschema %}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+{% javascript %}
+
+$(document).ready(function() {
+ $('.hotspot_product').hide();
+   $('.hotspot_product:first-child ').show();
+ $('button[data-id]:first').addClass('tabActive'); 
+      $('button[data-id]').click(function() {
+        var productId = $(this).data('id');
+        $('.hotspot_product').hide();
+        $('.hotspot_product[data-product="' + productId + '"]').show();
+        $('button[data-id]').removeClass('tabActive'); 
+        $(this).addClass('tabActive'); 
+    });
+});
+
+{% endjavascript %}
+<style>
+  .tabActive{
+    background-color:red;
+  }
+</style>
+<div class="cusotm-hotspot-banner">
+  <div class="cusotm-hotspot-banner-image">
+    <h1 >{{ section.settings.head }}</h1>
+  </div>
+  
+  <div class="hotspot-banner-image_svg_wrapper">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}    
+        <div class="cusotm-hotspot-banner-image_svg">
+            <button data-id="{{ product.id }}">
+            <p class="tg">{{ product.title }}</p>
+            </button>
+        </div>
+      {% endfor %}
+  </div>
+
+ <div class="hotspot_product-wrapper"> 
+    {% for block in section.blocks %}
+      {% assign product = block.settings.product %}    
+
+      <div class="hotspot_product" data-product="{{ product.id }}">
+        <a href={{ product.url }}></a>
+          {% if product.featured_image != blank %}
+              <img src={{ product.featured_image | img_url: 'master' }}>
+          {% endif %}
+          <h4>{{ product.title }}</h4>
+          <p> {{ product.price | money }}</p>
+
+      </div>
+      
+    {% endfor %}
+ </div>
+   
+</div>
+{% schema %}
+  {
+    "name": "Cstm Tab",
+    "settings": [
+      {
+        "type": "text",
+        "id": "head",
+        "label": "Heading"
+     }        
+  ],
+
+    "blocks":[
+      {
+        "name": "Product",
+        "type": "product",
+        "settings":[
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          }
+        ]
+      }  
+    ],
+    
+    "presets":[
+      {
+        "name": "Cstm Tab"
+      }
+    ]
+  }
+{% endschema %}

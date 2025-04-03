@@ -1,0 +1,15 @@
+$(document).ready(function () { 
+  $(".media ").slick({
+    autoplay: false,
+    autoplaySpeed: 700,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  });
+  $(".card__inner").mouseover(function () {
+    $(this).find(".media").slick("play");
+  });
+  $(".card__inner").mouseout(function () {
+    $(this).find(".media").slick("pause");
+  });
+  });

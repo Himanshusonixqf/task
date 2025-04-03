@@ -1,0 +1,160 @@
+<div class="featured_product_container">
+  <div class="page-width">
+    <div class="featured_inner_container">
+      {% assign product = section.settings.featured_product %}
+      <div class="left_container">
+        <img src="{{ product.featured_image.src | img_url: 'master' }} ">
+      </div>
+      <div class="right_container">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'vendor' %}
+              <p class="align_{{ block.settings.vendor}}" {{ block.shopify_attributes }}>{{ product.vendor }}</p>
+            {% when 'text' %}
+              <h2 {{ block.shopify_attributes }} class="h2content size_{{ block.settings.heading_size_clc}}">
+                {{ product.title }}
+              </h2>
+            {% when 'price' %}
+              {% if product.available %}
+                <p class="price" {{ block.shopify_attributes }}>
+                  {{ product.price | money }}
+                  <span>In stock</span>
+                </p>
+              {% else %}
+                <p class="price">
+                  {{ product.price | money }}
+                  <span>Out of stock</span>
+                </p>
+              {% endif %}
+            {% when 'quantity' %}
+              <div class="qtydiv" {{ block.shopify_attributes }}>
+                <label for="Quantity" class="quantity-selector">Quantity</label>
+                <div class="qtybox">
+                  <span class="btnqty qtyminus icon icon-minus">-</span>
+                  <input
+                    type="text"
+                    id="quantity"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    class="quantity-selector quantity-input"
+                    readonly=""
+                  >
+                  <span class="btnqty qtyplus icon icon-plus">+</span>
+                </div>
+              </div>
+            {% when 'button' %}
+              <a href="{{ product.url }}" {{ block.shopify_attributes }} class="a size_{{ block.settings.bgColor}}"
+                >Add To Cart</a
+              >
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": " Featured Product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Select Product"
+    }
+  ],
+  "blocks":[
+      {
+        "name": "text",
+        "type": "text",
+        "settings":[
+         {
+      "type": "select",
+      "id": "heading_size_clc",
+      "label": "Heading size",
+      "options": [
+        {
+      "value": "small",
+      "label": "Small"
+    },
+    {
+      "value": "medium",
+      "label": "Medium"
+    },
+    {
+      "value": "large",
+      "label": "Large"
+    }
+  ],
+  "default": "large"
+}
+        ]
+      },
+    {
+      "name":"Vendor",
+      "type":"vendor",
+          "settings":[
+         {
+      "type": "select",
+      "id": "vendor",
+      "label": "Alignments",
+      "options": [
+        {
+      "value": "left",
+      "label": "Left"
+    },
+    {
+      "value": "center",
+      "label": "Center"
+    },
+    {
+      "value": "right",
+      "label": "Right"
+    }
+  ],
+  "default": "left"
+}
+        ]
+    },
+    {
+      "name":"Price",
+      "type":"price"
+    },
+    {
+      "name":"Quantity",
+      "type":"quantity"
+    },
+     {
+      "name":"Button",
+      "type":"button",
+       "settings":[
+         {
+      "type": "select",
+      "id": "bgColor",
+      "label": "Choose Bg Color",
+      "options": [
+        {
+      "value": "black",
+      "label": "Black"
+    },
+        {
+      "value": "skyblue",
+      "label": "Sky-Blue"
+    },
+    {
+      "value": "purple",
+      "label": "Purple"
+    }
+  ],
+  "default": "black"
+}
+        ]
+    }
+  ],
+  "presets" : [
+    {
+      "name" : "Featured Product"
+    }
+  ]
+}
+{% endschema %}

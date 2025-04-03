@@ -1,0 +1,211 @@
+/* Gift Code  */
+.featured_products {
+  display: none;
+  margin: 0 0 0 28px;
+}
+.drawer__inner .featured_products img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+}
+.gift-flex {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  width: 100%;
+  gap: 20px;
+}
+.gift-wrap-option {
+  display: flex;
+  align-items: baseline;
+}
+label.gift_wrap_title {
+  font-size: 16px !important;
+  text-transform: capitalize !important;
+}
+
+.drawer__inner .show_gift {
+  width: 100%;
+}
+.gift-note {
+  width: 100%;
+  margin: 0 28px;
+  padding: 6px 0;
+}
+
+.gift-note textarea {
+  font-size: 15px;
+  height: 65px;
+  min-height: 65px;
+}
+.gift-wrap-options {
+  position: relative;
+  margin: 35px 0;
+}
+.gift-wrap-option label {
+  display: inline;
+  letter-spacing: 0.1em !important;
+}
+.show_gift {
+  display: none;
+  background: #cfe3d9;
+  padding: 20px;
+  width: 100%;
+  border: 1px solid #ccc;
+}
+input {
+  cursor: pointer;
+}
+button#add-gift-wrap {
+  background-color: transparent;
+  border: 1px solid #99871f;
+  color: #4b5666;
+  cursor: pointer;
+  letter-spacing: 0.24rem;
+  line-height: normal;
+  min-height: 35px;
+  padding: 5px 20px;
+  text-transform: uppercase;
+  width: 10%;
+  margin: 10px 0 10px 28px;
+  transition: all 0.3s ease-in-out;
+}
+button#add-gift-wrap:hover {
+  border-color: #000;
+}
+button#cancel {
+  background: none;
+  color: #4b5666;
+  cursor: pointer;
+  letter-spacing: inherit;
+  text-align: left;
+  text-decoration: underline;
+  border: none;
+}
+
+h3.toggle {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* Gift Code  End*/
+
+<div class="main_gift_ck">
+ {% assign gift_wrap_products = settings.product_list %}
+   {% for product in gift_wrap_products %}
+     {% assign id = product.id %}
+   {% endfor %}
+  {%- if cart.item_count > 0 -%}
+    {% assign gift_w = false %}
+    {% for item in cart.items %}
+      {% if item.product_id == id  %}
+        {% assign gift_w = true %}
+      {% endif %}
+    {% endfor %}
+
+    {% if gift_w != true %}
+      <div class="gift-wrap-options">
+        <h3 class="toggle"><i class="fa-solid fa-gift"></i> Add Gift Wrap</h3>
+        <div class="show_gift">
+         <div class="gift-flex">
+          <div class="gift-input">
+          {% for product in gift_wrap_products %}
+             {% for variant in product.variants %}
+            <div class="gift-wrap-option" data-variant-id="{{ variant.id }}">
+              <input
+                type="radio"
+                id="gift_wrap_{{ forloop.index }}"
+                name="gift_wrap"
+                value="{{ variant.id }}"
+               {% if forloop.index == 1 %} checked="checked" {% endif %}
+              >
+              <label for="gift_wrap_{{ forloop.index }}" class="gift_wrap_title">{{ variant.title }}, {{ variant.price | money_with_currency }}</label>
+            
+            </div>
+          {% endfor %}
+           {% endfor %}
+            </div>
+            <div class="gift-image">
+           {% for product in gift_wrap_products %}
+             {% for variant in product.variants %}
+            <div class="featured_products" data_match-id={{ variant.id }}  {% if forloop.index == 1 %} style = "display:block"{% endif %}>
+           <img src="{{ variant.featured_image.src | img_url: '150x' }}" class="product_img" id="selected_product_img" alt="Selected Product Image">
+           </div>
+          {% endfor %}
+           {% endfor %}
+          </div>
+        </div>
+          <div class="gift-note">
+            <label for="gift_note">Personalized Note:</label>
+            <textarea id="gift_note" name="gift_note" rows="3" cols="30"></textarea>
+          </div>
+          <button id="add-gift-wrap" class="btn">Save</button>
+          <button id="cancel" class="btn">Cancel</button>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
+</div>
+<script>
+  $(document).ready(function() {
+    
+    $(".js-qty__adjust").on("click",function() {
+      setTimeout(function(){
+        location.reload();
+      }, 300);
+    });
+
+    $(document).on("click",".toggle",function() {
+      $('.show_gift').toggle(300);
+    });
+
+     $(document).on('click','#cancel',function(e) {
+      e.preventDefault();
+      $('.show_gift').toggle(300);
+    });
+    
+    $(document).on("click","#add-gift-wrap",function(e) {
+      e.preventDefault();
+      var selectedProduct = $('input[name="gift_wrap"]:checked').val();
+      var personalizedNote = $('#gift_note').val();
+      updateCart(selectedProduct, personalizedNote);
+    });
+
+    function updateCart(selectedProduct, personalizedNote) {
+      $.ajax({
+        url: '/cart/add.js',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          id: selectedProduct,
+          quantity: 1,
+          properties: {
+            'Gift Note': personalizedNote
+          }
+        },
+        success: function() {
+          {% if request.page_type != 'cart' %}
+          document.dispatchEvent(new CustomEvent('cart:build', {bubbles: true}));
+           $(".main_gift_ck").load(location.href+" .main_gift_ck>*","");
+          {% else %}
+          window.location ="/cart";
+          {% endif %}
+        },
+        error: function() {
+          console.log('Error adding new variant to cart');
+        }
+      });
+    }
+
+    $(document).on('change', '.gift-wrap-option input', function() {  
+        var checkedValue = $('input[name="gift_wrap"]:checked').val();
+        $('.featured_products').each(function(){
+         var image_values = $(this).attr('data_match-id');
+          if(checkedValue == image_values){
+            $(this).show();
+           }else{
+            $(this).hide();
+           }
+        });
+});
+});
+</script>

@@ -1,0 +1,63 @@
+<div class="main_clc_task_second">
+  <div class="page-width">
+    <div class="under_second_task">
+      {% assign collection_prdct = section.settings.collection_task_second %}
+      <div class="inner_second_task">
+        <div class="inner_left_content">
+          {% for product in collection_prdct.products %}
+            <div class="product_content_left">
+              <a class="product_url" href="{{product.url}}"></a>
+              <div class="product_img">
+                <img src="{{ product.featured_image | img_url:'500x' }}">
+              </div>
+              <p>{{ product.price | money }}</p>
+              <p class="title">{{ product.title }}</p>
+
+              {% if product.available %}
+                <p class="stock">In Stock</p>
+              {% else %}
+                <p class="out_stock">Out Of Stock</p>
+              {% endif %}
+
+              {% if product.compare_at_price %}
+                <div class="badge_sale">Deal</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="product_content_right">
+          {% if section.settings.second_task_img != blank %}
+            <img src="{{ section.settings.second_task_img | img_url:'1024x' }}">
+          {% else %}
+            {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Collection Task",
+  "settings": [
+     {
+            "type": "collection",
+            "id": "collection_task_second",
+            "label": "Select collection"
+          },
+      {
+              "type": "image_picker",
+              "id": "second_task_img",
+              "label": "Image"
+            }
+  ],
+
+   "presets":[
+      {
+        "name":"Featured Collection Task"
+}
+    ]
+}
+{% endschema %}

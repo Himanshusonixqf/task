@@ -1,0 +1,18 @@
+
+  var $slider = $(".cstmslide");
+
+  $slider.slick({
+    dots: false,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    prevArrow: leftArrow,
+    nextArrow: rightArrow,
+    responsive: [
+      {
+        breakpoint: 990,
+        settings: "unslick",
+      },
+    ],
+  });

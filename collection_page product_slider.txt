@@ -1,0 +1,21 @@
+  $(".media ").slick({
+    autoplay: false,
+    autoplaySpeed: 700,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  });
+  $(".card__inner").mouseover(function () {
+    $(this).find(".media").slick("play");
+  
+  });
+  $(".card__inner").mouseout(function () {
+    $(this).find(".media").slick("pause");
+  });
+
+
+  {% for media in card_product.media %}
+                 <div class="hoverimg">
+                  <img src="{{ media | img_url: '1024x' }}" alt="{{ media.alt }}">
+                 </div>
+   {% endfor %}

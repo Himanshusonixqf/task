@@ -1,0 +1,28 @@
+  $(".card").on("mouseover", function () {
+    var classFindOne = $(this).find(".full-unstyled-link");
+    var classFindTwo = $(this).find(".cstm_badge").text();
+    var classFindThree = $(this).find(".media");
+    if (classFindTwo === "Sold out") {
+      var pop = $(
+        "<div class='popup'>This product is currently unvailable!</div>"
+      );
+      $("body").append(pop);
+      var position = $(this).offset();
+      pop.css({
+        top: position.top,
+        left: position.left,
+        position: "absolute",
+        background: "gray",
+        border: "1px solid black",
+        padding: "7px",
+        "z-index": 1000,
+      });
+      $(this).css("cursor", "no-drop");
+      classFindThree.slick("pause");
+      classFindOne.css("pointer-events", "none");
+
+      $(this).on("mouseleave", function () {
+        pop.remove();
+      });
+    }
+  });

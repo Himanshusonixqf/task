@@ -1,0 +1,135 @@
+var loading = false;
+function loadMoreContent() {
+  if (!loading) {
+    loading = true;
+    var nextPageLink = $('#Huratips-Pagination a');
+    if (nextPageLink.length) {
+      $.ajax({
+        url: nextPageLink.attr('href'),
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+        var newContent = $(data).find('#product-grid').html();
+        $('#product-grid').append(newContent); 
+              nextPageLink.attr('href', $(data).find('#Huratips-Pagination a').attr('href'));
+},
+
+        error: function(xhr, status, error) {
+          console.error('Error loading more content:', error);
+        },
+        complete: function() {
+          loading = false;
+        }
+      });
+    }
+  }
+}
+var observer = new IntersectionObserver(function(entries, observer) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) 
+      loadMoreContent();
+  });
+});
+
+if ($('#Huratips-Pagination').length) observer.observe($('#Huratips-Pagination')[0]);
+
+
+//html
+  <div id="Huratips-Pagination">
+  {% if paginate.next %}
+    <a href="{{ paginate.next.url }}" class="js-load-more">Load More</a>
+  {% endif %}
+</div>
+
+//second
+
+          <div id="Huratips-Pagination">
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="js-load-more"></a>
+            {% endif %}
+          </div>
+
+
+<script>
+  $(document).ready(function(){
+  var loading = false;
+  function loadMoreContent() { 
+    if (!loading) {
+      loading = true;
+      var nextPageLink = $("#Huratips-Pagination a");
+      if (nextPageLink.length) {
+        $.ajax({
+          url: nextPageLink.attr("href"),
+          type: "GET",
+          dataType: "html",
+          success: function (data) {
+            var newContent = $(data).find("#product-grid").html();
+            $("#product-grid").append(newContent);
+            nextPageLink.attr(
+              "href",
+              $(data).find("#Huratips-Pagination a").attr("href")
+            );
+          },
+
+          error: function (xhr, status, error) {
+            console.error("Error loading more content:", error);
+          },
+          complete: function () {
+            loading = false;
+          },
+        });
+      }
+    }
+  }
+  var observer = new IntersectionObserver(function (entries, observer) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) loadMoreContent();
+    });
+  });
+
+  if ($("#Huratips-Pagination").length)
+    observer.observe($("#Huratips-Pagination")[0]);
+});
+
+</script><script>
+  $(document).ready(function(){
+  var loading = false;
+  function loadMoreContent() { 
+    if (!loading) {
+      loading = true;
+      var nextPageLink = $("#Huratips-Pagination a");
+      if (nextPageLink.length) {
+        $.ajax({
+          url: nextPageLink.attr("href"),
+          type: "GET",
+          dataType: "html",
+          success: function (data) {
+            var newContent = $(data).find("#product-grid").html();
+            $("#product-grid").append(newContent);
+            nextPageLink.attr(
+              "href",
+              $(data).find("#Huratips-Pagination a").attr("href")
+            );
+          },
+
+          error: function (xhr, status, error) {
+            console.error("Error loading more content:", error);
+          },
+          complete: function () {
+            loading = false;
+          },
+        });
+      }
+    }
+  }
+  var observer = new IntersectionObserver(function (entries, observer) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) loadMoreContent();
+    });
+  });
+
+  if ($("#Huratips-Pagination").length)
+    observer.observe($("#Huratips-Pagination")[0]);
+});
+
+</script>

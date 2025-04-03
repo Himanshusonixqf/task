@@ -1,0 +1,39 @@
+          {%- if childlink.type == 'collection_link' -%}
+                        {% assign linkCollection = childlink.object %}
+                        <h2>{{ linkCollection.title }}</h2>
+                        <div class="menu_clc">
+                          {% for product in linkCollection.products %}
+                            <div class="nav-collection_image">
+                              <img
+                                crossorigin="anonymous"
+                                class="nav-child-link-image"
+                                src="{{product.featured_image.src | product_img_url: '200x'}}"
+                                alt="{{grandchild_link.title}}"
+                                width=""
+                                height=""
+                              >
+                              <p>{{ product.title }}</p>
+                              <p>{{ product.price | money }}</p>
+                            </div>
+                          {% endfor %}
+                        </div>   
+                       {%- elsif childlink.type == 'product_link' -%}
+                          {% assign product = childlink.object %}
+                        <h2>{{ product.title }}</h2>
+                        <div class="menu_prdct">
+                        <div class="menu_clc">
+                            <div class="nav-collection_image">
+                              <img
+                                crossorigin="anonymous"
+                                class="nav-child-link-image"
+                                src="{{product.featured_image.src | product_img_url: '200x'}}"
+                                alt="{{grandchild_link.title}}"
+                                width=""
+                                height=""
+                              >
+                              <p>{{ product.title }}</p>
+                              <p>{{ product.price | money }}</p>
+                            </div>
+                        </div>
+                        </div>   
+                        {%- endif -%}

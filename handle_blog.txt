@@ -1,0 +1,30 @@
+<style>
+    .main_handle_blg {
+      display: flex;
+      gap: 30px;
+  }
+</style>
+
+<div class="main_handle_blg page-width">
+  {% for article in blogs['prvn-kristi-blg'].articles %}
+    <div class="blg_content">
+      {{ article | image_url: width: 400 | image_tag }}
+      <p>
+        <a href="{{ article.url }}">{{ article.title }}</a>
+      </p>
+    </div>
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Handle Blog",
+  "settings": [
+  ],
+  "presets": [
+    {
+      "name":"Handle Blog"
+    }
+  ]
+}
+{% endschema %}

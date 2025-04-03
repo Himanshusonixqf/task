@@ -1,0 +1,12 @@
+{% assign data_availble = false %}
+{% if collection.handle == 'lagniappe' %}
+    {% assign lagniappe_collection = true %}
+    {% if customer.tags contains 'subscribed' %}
+      {% assign data_availble = true %}
+    {% endif %}
+  {% endif %}
+
+{% if lagniappe_collection == true and data_availble == false %}
+  <p class="collection_note">To view this collection, please ensure you are a member of our store. If you are already a member, please <a href="/account/login">log in</a> Otherwise, kindly subscribe to our <a href="#shopify-section-sections--22999423549754__footer">newsletter</a>. Thank you!</p>
+{% else %}
+your content...............

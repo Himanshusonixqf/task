@@ -1,0 +1,48 @@
+<div class="link_list_container">
+  <div class="page-width">
+    <div class="cstm_linklist">
+      {% assign link_list = section.settings.menu %}
+      <ul class="parent_ul">
+        {% for link in link_list.links %}
+          <li>
+            <a href="{{ link.url }} ">{{ link.title }} </a>
+            <ul class="child_ul">
+              {% for child_link in link.links %}
+                <li>
+                  <a href="{{ child_link.url }}">{{ child_link.title }} </a>
+                  <ul class="grand_ul">
+                    {% for grand_child in child_link.links %}
+                      <li>
+                        <a href="{{ grand_child.url }}">{{ grand_child.title }} </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+      <span class="open"> &#9776;</span>
+      <span class="cross"> &#10006;</span>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Link List",
+  "settings": [
+      {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    }
+  ],
+  "presets":[
+    {
+      "name":"Link List"
+    }
+  ]
+}
+{% endschema %}

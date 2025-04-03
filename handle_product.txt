@@ -1,0 +1,35 @@
+<style>
+    h5.title {
+    margin: 0;
+  }
+  .product_content{
+   text-align:center;
+  }
+</style>
+
+<div class="main_handle_prdct_page">
+  <div class="product_page">
+    {% assign product_handle = 'your-products-title-here-prvn' %}
+    {% assign product = all_products[product_handle] %}
+    <div class="product_content">
+      {{ product | image_url: width: 200 | image_tag }}
+      <h5 class="title">{{ product.title }}</h5>
+      <p class="title">{{ product.price | money }}</p>
+      <a href="{{ product.url }}">Buy Now</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Handle Product",
+  "settings": [
+
+  ],
+  "presets": [
+    {
+    "name":"Handle Product"
+    }
+  ]
+}
+{% endschema %}

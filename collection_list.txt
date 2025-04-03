@@ -1,0 +1,96 @@
+<div class="Main_clc_list_task">
+  <div class="page-width">
+    <div class="under_clc_task">
+      {% if section.settings.heading_clc_list != blank %}
+        <h2 class="h2 size_{{ section.settings.heading_size_clc}}">{{ section.settings.heading_clc_list }}</h2>
+      {% endif %}
+      <div class="inner_clc_task ">
+        {% for block in section.blocks limit: section.settings.collection_display %}
+          <div
+            class="inner_content clcu_{{ section.settings.collection_desktop_display }} "
+            {{ block.shopify_attributes }}
+          >
+            {% assign collections = block.settings.clc_list_task %}
+            <a class="url" href="{{ collections.url }}"></a>
+            <div class="collection_img">
+              <img src="{{ collections.featured_image | img_url:'500x' }}">
+            </div>
+            <h6>{{ collections.title }}</h6>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection List Task",
+    "settings": [
+       {
+          "type": "text",
+          "id": "heading_clc_list",
+          "label":"Heading label",
+          "default":"Heading"
+      },
+      {
+      "type": "select",
+      "id": "heading_size_clc",
+      "label": "Heading size",
+      "options": [
+        {
+      "value": "small",
+      "label": "Small"
+    },
+    {
+      "value": "medium",
+      "label": "Medium"
+    },
+    {
+      "value": "large",
+      "label": "Large"
+    }
+  ],
+  "default": "large"
+},
+        {
+        "type": "range",
+        "id": "collection_display",
+        "min": 1,
+        "max": 24,
+        "step": 1,
+        "label": "Collection to Show",
+        "default": 6
+        },
+       {
+        "type": "range",
+        "id": "collection_desktop_display",
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "label": "Number of columns on desktop",
+        "default":6
+        }
+    ],
+    "blocks":[
+      {
+        "name": "Collection list",
+        "type": "collection",
+        "settings":[
+          {
+              "type": "collection",
+              "id": "clc_list_task",
+              "label": "Collection List"
+            }
+        ]
+      }
+
+    ],
+    "max_blocks" : 6,
+   "presets":[
+      {
+        "name":"Collection List Task"
+}
+    ]
+  }
+{% endschema %}

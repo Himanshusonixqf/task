@@ -1,0 +1,246 @@
+<style>
+    .qtydiv label{display: block;margin-bottom: 12px;letter-spacing: 2.8px;color: #747a7b;}
+    .qtydiv .btnqty{display: inline-block;cursor: pointer;user-select: none;font-size: 25px;padding: 5px;line-height: 5px;}
+    .qtydiv .btnqty.qtyminus{margin-right: 8px;}
+    .qtydiv .btnqty.qtyplus{margin-left: 8px;}
+    .qtydiv .quantity-input{border: none;border: none;padding: 8px;text-align: center;width: 50px;outline: none;display: inline-block;}
+    .qtydiv {display: inline-block;padding-right: 15px;padding-top: 10px;}
+
+      span.btnqty.qtyplus.icon.icon-plus {
+        top: 1px;
+    }
+      span.btnqty.qtyminus.icon.icon-minus {
+        top: 1px;
+        left: 1px;
+        background-color: #1cab1c8a;
+        width: 27%;
+        height: 96%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor:no-drop;
+    }
+      .qtydiv .quantity-input {
+        padding: 12px;
+        width: 149px;
+        border: 1px solid black;
+    }
+      .qtydiv .btnqty {
+        font-size: 20px;
+    }
+      span.btnqty.qtyplus.icon.icon-plus {
+        background-color: #1cab1c;
+        width: 26.9%;
+        height: 96%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+      img.featured_product_img {
+        width: 100%;
+    }
+      .ready {
+        color: green;
+        font-weight: 900;
+        display:none;
+    }
+    .cstm_line_item {
+      padding: 5px;
+  }
+</style>
+<div class="featured_product_container">
+  <div class="page-width">
+    <div class="add_featured_inner_container">
+      {% assign collection = section.settings.collection %}
+      {% for product in collection.products %}
+        <div class="add_right_container" data-product-id="{{ product.id }}">
+          <div class="featured_product" style="opacity:{{ section.settings.image_overlay_opacity }}%">
+            <img src="{{ product.featured_image.src | img_url: '500x' }}" class="featured_product_img">
+          </div>
+          <div class="add_content">
+            <h2>{{ product.title }}</h2>
+            <p>{{ product.price | money }}</p>
+
+            {% assign collection = product.metafields.custom.product_id.value %}
+            <input type="hidden" value="{{ collection.id }}" id="product_id">
+
+            <div class="qtydiv">
+              <label for="quantity_{{ product.id }}" class="quantity-selector">Quantity</label>
+              <div class="qtybox">
+                <span class="btnqty qtyminus icon icon-minus">-</span>
+                {% comment %} <span class="btnqty qtyminus icon icon-minus" onclick="changeQuantity({{ product.id }}, -1)">-</span>  {% endcomment %}
+                <input
+                  type="number"
+                  id="quantity_{{ product.id }}"
+                  name="quantity_{{ product.id }}"
+                  value="0"
+                  min="0"
+                  class="quantity-selector quantity-input"
+                  readonly
+                >
+                {% comment %}<span class="btnqty qtyplus icon icon-plus"  onclick="changeQuantity({{ product.id }}, 1)">+</span>{% endcomment %}
+                <span class="btnqty qtyplus icon icon-plus" product-data="{{ product.variants.first.id }}">+</span>
+              </div>
+            </div>
+
+            <label for="checkbox_{{ product.id }}" class="label">
+              <input
+                type="checkbox"
+                id="checkbox_{{ product.id }}"
+                name="checkbox"
+                value="{{ product.variants.first.id }}"
+              >
+              Check to add to cart with (1) quantity
+            </label>
+            <div class="ready">This Product Ready For Add To Cart</div>
+            <fieldset>
+              <legend><label class="line_item_label">Line Item</label></legend>
+              <input type="text" class="cstm_line_item" id="cstmline_{{ product.id }}" placeholder="Personalization">
+            </fieldset>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="add_btn">
+      <div id="add_to_cart_btn_container">
+        <form id="add_to_cart_form">
+          <input type="submit" value="Add to cart" class="btn">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Add Featured Product",
+  "settings": [
+    {
+      "type":"collection",
+      "id":"collection",
+      "label":"Collection"
+    },
+     {
+      "type":"range",
+      "id":"range",
+      "label": "Font Size",
+      "min":10,
+      "max":100,
+      "step":1,
+      "unit":"px",
+      "default":50
+    },
+      {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "image_overlay_opacity",
+      "default": 100
+    },
+    {
+  "type": "checkbox",
+  "id": "show_announcement",
+  "label": "Show Vendor",
+  "default": false
+}
+  ],
+  "presets" : [
+    {
+      "name" : "Add Featured Product"
+    }
+  ]
+}
+{% endschema %}
+<script>
+  $(document).ready(function(){
+     $('.btnqty').click(function(event){
+       var hh ;
+        var totalqnty = $(this).siblings('.quantity-input').val();
+        if( event.target.className.includes('qtyplus')){
+          totalqnty++;
+          $(this).siblings('.quantity-input').val(totalqnty);
+
+          if(totalqnty >= 1){
+          var findCheckbox = $(this).closest(".qtydiv").next('.label');
+           hh = findCheckbox.find('input[type="checkbox"]');
+            hh.attr("checked", true);
+             hh.prop("checked", true);
+            var f = $(this).closest(".qtybox").find(".qtyminus");
+              f.css({"background-color":"#1cab1c", "cursor":"pointer"});
+             $(this).closest('.qtydiv').siblings('.ready').show();
+        }
+
+        }else{
+          if(totalqnty > 0){
+           totalqnty--;
+          $(this).siblings('.quantity-input').val(totalqnty);
+          }
+        if(totalqnty < 1){
+          var findCheckbox = $(this).closest(".qtydiv").next('.label');
+           hh = findCheckbox.find('input[type="checkbox"]:checked');
+           hh.attr('checked', false);
+           hh.prop("checked", false);
+           var f = $(this).closest(".qtybox").find(".qtyminus");
+              f.css({"background-color":"#1cab1c8a", "cursor":"no-drop"});
+             $(this).closest('.qtydiv').siblings('.ready').hide();
+            }
+        }
+     });
+
+     $('input[type="checkbox"]').on("change", function(){
+       if($('input[type="checkbox"]:checked').prop('checked') == true){
+       $(this).parent('.label').siblings('.qtydiv').find('.quantity-input').val(1);
+        $(this).parent('.label').siblings('.ready').show();
+       var x = $(this).parent('.label').siblings(".qtydiv").find(".qtyminus");
+              x.css({"background-color":"#1cab1c", "cursor":"pointer"});
+     }
+       else{
+        $(this).parent('.label').siblings('.qtydiv').find('.quantity-input').val(0);
+         $(this).parent('.label').siblings('.ready').hide();
+        var y = $(this).parent('.label').siblings(".qtydiv").find(".qtyminus");
+              y.css({"background-color":"#1cab1c8a", "cursor":"no-drop"});
+       }
+      });
+
+      $("#add_to_cart_form").click(function(e){
+        e.preventDefault();
+        var item = [];
+          $('input[type="checkbox"]:checked').each(function(){
+            var productid = $(this).val();
+            var prdctId = $(this).attr('id').split('_')[1];
+            var qnty = parseInt($('#quantity_' + prdctId ).val());
+            var line = $("#cstmline_" + prdctId ).val();
+
+            item.push({
+              id:productid,
+              quantity:qnty,
+              properties : {
+                "lineItem":line
+              }
+            })
+          });
+
+        if(item == ''){
+          alert("Plz Select Products");
+        }
+
+        $.ajax({
+          type:'POST',
+          url:'cart/add.js',
+          data:JSON.stringify({items:item}),
+          contentType:'application/json',
+          success:function(){
+            alert("product add to cart");
+             window.location = '/cart';
+            $('input[type="checkbox"]:checked').prop("checked", false);
+          },
+          error:function(){
+            console.log("error");
+          }
+        })
+      });
+    });
+</script>

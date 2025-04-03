@@ -1,0 +1,38 @@
+  {% unless product.has_only_default_variant %}
+                  {% for option in product.options_with_values %}
+                    {{  option}}
+                    <div class="selector-wrapper js product-form__item">
+                      <label
+                        {% if option.name == 'default' %}
+                          class="label--hidden"
+                        {% endif -%}
+                        for="SingleOptionSelector-{{ forloop.index0 }}"
+                      >
+                        {{ option.name }}
+                      </label>
+                      <div>
+                        {% for value in option.values %}
+                          {% if option.name contains 'Color' %}
+                            {% for variant in product.variants %}
+                              {%- assign display = 'block' -%}
+                              {% if variant.title contains value %}
+                                {%- assign color = value -%}
+                                 {%- assign variant_id = variant.id -%}
+                                {%- assign display = 'none' -%}
+                              {% endif %}
+                            {% endfor %}
+
+                            <span
+                              data-id="{{ color.id }}"
+                               data-variant="{{ variant_id }}"
+                              data-color="{{ color }}"
+                              style="background-color:{{ color }};width:40px;height:40px;display:inline-block;"
+                              class="color-swatch"
+                              title="{{ color }}"
+                            ></span>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% endunless %}
